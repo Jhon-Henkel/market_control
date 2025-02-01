@@ -13,6 +13,9 @@ NFCe e o sistema irá buscar os dados e salvar no banco de dados para posteriore
 Rodar:
 ```bash
   docker-compose up
+  make bakcnd-bash
+  chown www-data:www-data -R storage/framework
+  chown www-data:www-data -R storage/logs/
 ```
 
 ## Comandos Make
