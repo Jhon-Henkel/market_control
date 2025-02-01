@@ -13,6 +13,7 @@
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
+        "larastan/larastan": "^3.0",
         "laravel/pail": "^1.1",
         "laravel/pint": "^1.13",
         "laravel/sail": "^1.26",
@@ -39,7 +40,10 @@
         ],
         "post-update-cmd": [
             "@php artisan vendor:publish --tag=laravel-assets --ansi --force"
-        ]
+        ],
+        "pint": "./vendor/bin/pint --test --preset psr12",
+        "pint-fix": "./vendor/bin/pint --preset psr12",
+        "phpstan": "./vendor/bin/phpstan analyse --memory-limit=512M --configuration=./config/linter/phpstan.neon"
     },
     "extra": {
         "laravel": {
