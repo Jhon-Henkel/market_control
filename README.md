@@ -15,5 +15,8 @@ Rodar:
   docker-compose up
 ```
 
+## Comandos Make
+- `make bakcnd-bash` Inicia os containers e entra no bash do backend
+
 ## Acessos 
 - [PHP My Admin](http://localhost:8080) > Usuário `root` Senha `123`
