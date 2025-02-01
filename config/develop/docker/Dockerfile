@@ -2,7 +2,7 @@ FROM composer AS composer-php
 
 FROM php:8.4-apache
 
-COPY ../../../backend/ .
+COPY . .
 WORKDIR /var/www/html/backend
 
 # copy composer
@@ -23,7 +23,9 @@ RUN a2enmod rewrite
 RUN addgroup --gid 1000 appuser; \
     adduser --uid 1000 --gid 1000 --disabled-password appuser; \
     adduser www-data appuser; \
-    sed -i '/<Directory \/var\/www\/>/,/<\/Directory>/ s/AllowOverride None/AllowOverride All/' /etc/apache2/apache2.conf; \
+    sed -i '/<Directory \/var\/www\/backend\/>/,/<\/Directory>/ s/AllowOverride None/AllowOverride All/' /etc/apache2/apache2.conf; \
+    sed -i 's|/var/www/html|/var/www/html/backend/public|' /etc/apache2/sites-available/000-default.conf; \
+    chown -R www-data:www-data /var/www/html/backend/public; \
     service apache2 restart;
 
 # installing and setting xdbug
