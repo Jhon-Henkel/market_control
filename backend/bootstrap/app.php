@@ -1,7 +1,9 @@
 <?php
 
+use App\Modules\_Shared\Enum\Response\HttpResponseLevelEnum;
 use App\Modules\_Shared\Enum\Response\HttpStatusCodeEnum;
 use App\Modules\_Shared\Exceptions\HttpExceptions\BadRequestException;
+use App\Modules\_Shared\Response\ResponseError;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -17,14 +19,18 @@ return Application::configure(basePath: dirname(__DIR__))
     })
     ->withExceptions(function (Exceptions $exceptions) {
         $exceptions->render(function (BadRequestException $e) {
-            $code = HttpStatusCodeEnum::HttpBadRequest->value;
-            $message = json_decode($e->getMessage());
-            return response()->json(['message' => $message, 'status' => $code, 'level' => 'validation'], $code);
+            return ResponseError::responseError(
+                $e->getMessage(),
+                HttpStatusCodeEnum::HttpBadRequest,
+                HttpResponseLevelEnum::Validation
+            );
         });
 
         $exceptions->render(function (Throwable $e) {
-            $code = HttpStatusCodeEnum::HttpInternalServerError->value;
-            $message = $e->getMessage();
-            return response()->json(['message' => $message, 'status' => $code, 'level' => 'error'], $code);
+            return ResponseError::responseError(
+                $e->getMessage(),
+                HttpStatusCodeEnum::HttpInternalServerError,
+                HttpResponseLevelEnum::Error
+            );
         });
     })->create();
