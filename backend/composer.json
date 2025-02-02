@@ -9,7 +9,8 @@
         "php": "^8.4",
         "laravel/framework": "^11.31",
         "laravel/sanctum": "^4.0",
-        "laravel/tinker": "^2.9"
+        "laravel/tinker": "^2.9",
+        "ext-dom": "*"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
@@ -43,7 +44,8 @@
         ],
         "pint": "./vendor/bin/pint --test --preset psr12",
         "pint-fix": "./vendor/bin/pint --preset psr12",
-        "phpstan": "./vendor/bin/phpstan analyse --memory-limit=512M --configuration=./config/linter/phpstan.neon"
+        "phpstan": "./vendor/bin/phpstan analyse --memory-limit=512M --configuration=./config/linter/phpstan.neon",
+        "test:unit": "vendor/bin/phpunit ./tests/Unit"
     },
     "extra": {
         "laravel": {
