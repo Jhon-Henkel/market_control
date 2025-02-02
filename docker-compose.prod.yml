@@ -1,0 +1,58 @@
+services:
+  backend:
+    container_name: "mc_app"
+    build:
+      context: .
+      dockerfile: ./config/prod/docker/Dockerfile
+    ports:
+      - "8080:80"
+      - "443:443"
+    networks:
+      mc_network:
+        ipv4_address: 192.168.153.50
+    entrypoint: dockerize -wait tcp://mc_db:3306 -timeout 60s apache2-foreground
+    volumes:
+      - .:/var/www/html
+    tty: true
+    stdin_open: true
+    depends_on:
+      - database
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+
+  database:
+    image: mariadb:10.2.25-bionic
+    container_name: "mc_db"
+    ports:
+      - "8880:3306"
+    networks:
+      mc_network:
+        ipv4_address: 192.168.153.51
+    volumes:
+      - ./.docker/mariadb/data:/var/lib/mariadb
+      - ./config/prod/initdb:/docker-entrypoint-initdb.d
+    environment:
+      MYSQL_USER: root
+      MYSQL_ROOT_PASSWORD: 123
+    command: --default-authentication-plugin=mysql_native_password
+
+  php_my_admin:
+    image: phpmyadmin/phpmyadmin
+    container_name: "mc_db_admin"
+    ports:
+      - "2095:80"
+    networks:
+      mc_network:
+        ipv4_address: 192.168.153.52
+    environment:
+      PMA_HOST: mc_db
+      MYSQL_ROOT_PASSWORD: 123
+    depends_on:
+      - database
+
+networks:
+  mc_network:
+    ipam:
+      driver: default
+      config:
+        - subnet: 192.168.153.0/24
