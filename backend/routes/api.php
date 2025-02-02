@@ -1,7 +1,6 @@
 <?php
 
+use App\Modules\Nfce\Controller\NfceInsertController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/test', function () {
-    echo 'Hello, World!';
-});
+Route::post('/nfce', NfceInsertController::class);
