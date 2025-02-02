@@ -23,6 +23,11 @@ readonly class ChatBotController
 
         $chatId = $data['message']['chat']['id'];
         $message = strtolower($data['message']['text'] ?? '');
+        $username = $data['message']['from']['username'] ?? 'Sem username';
+
+        if (!in_array($username, config('app.telegram_allowed_usernames'))) {
+            return response()->json(['status' => 'unauthorized']);
+        }
 
         $cacheKey = "telegram_{$chatId}_step";
         $step = cache($cacheKey, 'default');
