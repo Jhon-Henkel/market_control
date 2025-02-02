@@ -24,7 +24,7 @@ class GetDataFromNfceUrlUseCase
         return [
             'products' => $products,
             'purchase_data' => $purchaseData,
-            'fiscal_data' => $this->getFiscalData($xpath)
+            'fiscal_data' => $this->getFiscalData($xpath, $fullHtml)
         ];
     }
 
@@ -80,14 +80,15 @@ class GetDataFromNfceUrlUseCase
         ];
     }
 
-    protected function getFiscalData(DOMXPath $xpath): array
+    protected function getFiscalData(DOMXPath $xpath, string $html): array
     {
         $infoNode = $xpath->query('//div[@id="infos"]/div/ul/li')->item(0)->nodeValue;
 
         return [
             'number' => Str::between($infoNode, 'NORMALNÃºmero: ', ' SÃ©rie'),
             'series' => Str::between($infoNode, 'SÃ©rie: ', ' EmissÃ'),
-            'emission' => Str::between($infoNode, 'EmissÃ£o: ', '- Via Consumidor')
+            'emission' => Str::between($infoNode, 'EmissÃ£o: ', '- Via Consumidor'),
+            'key' => Str::trim(Str::remove(" ", Str::between($html, 'Chave de acesso:</strong><br><span class="chave">', '</span></li>')))
         ];
     }
 }
