@@ -24,10 +24,11 @@ readonly class MonthChatUseCase
     {
         $totalAmount = number_format($purchases['total_amount'], 2, ',', '.');
 
-        $message = "📊 **Resumo das Compras do Mês**\n";
-        $message .= "🛒 **Total de Itens:** $purchases[total_products]\n";
-        $message .= "💰 **Valor Total:** R$ $totalAmount\n\n";
-        $message .= "📝 **Lista de Compras:**\n";
+        $message = "📊 Resumo das Compras do Mês\n";
+        $message .= "🛒 Total de Itens: $purchases[total_products]\n";
+        $message .= "💰 Valor Total: R$ $totalAmount\n\n";
+        $message .= "📝 Lista de Compras:\n";
+        $message .= "__underline__\n";
 
         foreach ($purchases['products'] as $produto) {
             $quantity = $produto['quantity'];
@@ -35,7 +36,7 @@ readonly class MonthChatUseCase
             $name = $produto['name'];
             $value = number_format($produto['total_value'], 2, ',', '.');
 
-            $message .= "🔹 $quantity $unit - R$ $value - <b>$name</b><br>";
+            $message .= "🔹 $quantity $unit - R$ $value - $name\n";
         }
 
         return $message;
