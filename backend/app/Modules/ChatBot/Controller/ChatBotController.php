@@ -32,6 +32,10 @@ readonly class ChatBotController
         $cacheKey = "telegram_{$chatId}_step";
         $step = cache($cacheKey, 'default');
 
+        if ($message === '/start') {
+            $this->interactWithUser($chatId, "Olá, bem-vindo ao Chatbot da NFC-e. Para começar, use um dos comandos disponíveis: \n**/nfce** -> Processar NFC-e");
+        }
+
         if ($message === '/nfce') {
             $this->interactWithUser($chatId, "Por favor, envie o link da NFC-e.");
             cache([$cacheKey => 'waiting_nfce'], now()->addMinutes(5));
@@ -58,6 +62,6 @@ readonly class ChatBotController
     protected function interactWithUser(int|string $chatId, string $message): void
     {
         $urlSendMessage = sprintf("https://api.telegram.org/bot%s/sendMessage", config('app.telegram_token'));
-        Http::post($urlSendMessage, ['chat_id' => $chatId, 'text' => $message]);
+        Http::post($urlSendMessage, ['chat_id' => $chatId, 'text' => $message, 'parse_mode' => 'MarkdownV2']);
     }
 }
