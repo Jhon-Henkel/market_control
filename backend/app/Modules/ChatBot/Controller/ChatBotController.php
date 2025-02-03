@@ -124,13 +124,26 @@ readonly class ChatBotController
 
     protected function processQRCode(string $imagePath): ?string
     {
-        try{
-            $result = new QRCode()->readFromFile($imagePath);
-            return (string)$result;
+//        try{
+//            $result = new QRCode()->readFromFile($imagePath);
+//            return (string)$result;
+//        }
+//        catch(Throwable $e){
+//            Log::error('Erro ao processar QR Code: ' . $e->getMessage());
+//            return null;
+//        }
+        $url = 'https://api.qrserver.com/v1/read-qr-code/';
+
+        $response = Http::attach(
+            'file', file_get_contents($imagePath), 'qr_code_image.jpg'
+        )->post($url);
+
+        $data = $response->json();
+
+        if (isset($data[0]['symbol'][0]['data'])) {
+            return $data[0]['symbol'][0]['data'];
         }
-        catch(Throwable $e){
-            Log::error('Erro ao processar QR Code: ' . $e->getMessage());
-            return null;
-        }
+
+        return null;
     }
 }
