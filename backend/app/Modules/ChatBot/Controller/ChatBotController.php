@@ -7,6 +7,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Zxing\QrReader;
 
 readonly class ChatBotController
 {
@@ -53,16 +54,51 @@ readonly class ChatBotController
 
         if ($message === '/nfce') {
             Log::info('/nfce');
-            $this->interactWithUser($chatId, "Por favor, envie o link da NFC-e.");
+            $this->interactWithUser($chatId, "Por favor, envie o link ou a foto do QR-Code da NFC-e.");
             cache([$cacheKey => 'waiting_nfce'], now()->addMinutes(5));
         } elseif ($step === 'waiting_nfce') {
-            if (!filter_var($message, FILTER_VALIDATE_URL)) {
+            if (isset($data['message']['photo'])) {
+                Log::info('Foto recebida, processando QR Code...');
+                $photo = end($data['message']['photo']);
+                $fileId = $photo['file_id'];
+
+                $url = sprintf("https://api.telegram.org/bot%s/getFile?file_id=%s", config('app.telegram_token'), $fileId);
+                $response = Http::get($url);
+                $filePath = $response->json()['result']['file_path'];
+
+                $imageUrl = sprintf("https://api.telegram.org/file/bot%s/%s", config('app.telegram_token'), $filePath);
+                $imageContent = file_get_contents($imageUrl);
+
+                if (is_dir('/tmp') === false) {
+                    mkdir('/tmp');
+                }
+
+                $imagePath = '/tmp/qr_code_image.jpg';
+                file_put_contents($imagePath, $imageContent);
+
+                $qrCodeData = $this->processQRCode($imagePath);
+
+                if ($qrCodeData && filter_var($qrCodeData, FILTER_VALIDATE_URL)) {
+                    $this->interactWithUser($chatId, "QR Code da NFC-e lido: " . $qrCodeData);
+
+                    $result = $this->insertByChatbotUseCase->execute($qrCodeData);
+
+                } else {
+                    Log::error('QR Code inválido');
+                    $this->interactWithUser($chatId, "O QR Code não contém uma URL válida de NFC-e.");
+                    cache()->forget($cacheKey);
+                    return response()->json(['status' => 'invalid url']);
+                }
+            } elseif (!filter_var($message, FILTER_VALIDATE_URL)) {
                 Log::error('Link nfce inválido');
                 $this->interactWithUser($chatId, "O link enviado não parece ser válido. Por favor, envie um link correto.");
+                cache()->forget($cacheKey);
                 return response()->json(['status' => 'invalid url']);
             }
 
-            $result = $this->insertByChatbotUseCase->execute($message);
+            if (! isset($result)) {
+                $result = $this->insertByChatbotUseCase->execute($message);
+            }
 
             if ($result['status'] === 'error') {
                 Log::error('Erro ao processar nfce');
@@ -83,5 +119,13 @@ readonly class ChatBotController
     {
         $urlSendMessage = sprintf("https://api.telegram.org/bot%s/sendMessage", config('app.telegram_token'));
         Http::post($urlSendMessage, ['chat_id' => $chatId, 'text' => $message]);
+    }
+
+    protected function processQRCode(string $imagePath): ?string
+    {
+        $reader = new QrReader($imagePath);
+        $qrCodeData = $reader->text();
+
+        return $qrCodeData ? $qrCodeData : null;
     }
 }
