@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $key
  * @property string $emission_date
  * @property int $purchase_id
- * @property bool $processed
+ * @property int $processed
  * @property string $created_at
  * @property string $updated_at
  *

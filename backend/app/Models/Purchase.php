@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * @property int $id
@@ -15,6 +16,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $purchase_date
  * @property string $created_at
  * @property string $updated_at
+ * @property Product[] $products
  *
  * @mixin Builder
  */
@@ -39,4 +41,9 @@ class Purchase extends Model
         'total_value' => 'decimal:2',
         'purchase_date' => 'datetime:Y-m-d H:i:s',
     ];
+
+    public function products(): HasMany
+    {
+        return $this->hasMany(Product::class);
+    }
 }

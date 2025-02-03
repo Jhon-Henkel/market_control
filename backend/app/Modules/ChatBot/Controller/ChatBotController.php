@@ -5,6 +5,7 @@ namespace App\Modules\ChatBot\Controller;
 use App\Modules\_Shared\Response\ResponseChat;
 use App\Modules\ChatBot\Enum\ResponseChatEnum;
 use App\Modules\ChatBot\UseCase\EndChat\EndChatUseCase;
+use App\Modules\ChatBot\UseCase\MonthChat\MonthChatUseCase;
 use App\Modules\ChatBot\UseCase\NfceProcess\NfceProcessUseCase;
 use App\Modules\ChatBot\UseCase\NfceStart\NfceStartUseCase;
 use App\Modules\ChatBot\UseCase\StartChat\StartChatUseCase;
@@ -18,7 +19,8 @@ readonly class ChatBotController
         private StartChatUseCase $startChatUseCase,
         private EndChatUseCase $endChatUseCase,
         private NfceStartUseCase $nfceStartUseCase,
-        private NfceProcessUseCase $nfceProcessUseCase
+        private NfceProcessUseCase $nfceProcessUseCase,
+        private MonthChatUseCase $monthChatUseCase
     ) {
     }
 
@@ -62,6 +64,11 @@ readonly class ChatBotController
         } elseif ($step === 'waiting_nfce') {
             $status = $this->nfceProcessUseCase->execute($data, $chatId, $cacheKey, $message);
             return ResponseChat::responseChat($status, $chatId);
+        }
+
+        if ($message === '/month') {
+            $this->monthChatUseCase->execute($chatId);
+            return ResponseChat::responseChat(ResponseChatEnum::Ok);
         }
 
         ResponseChat::interactWithUser($chatId, "Comando inválido. Digite /start para iniciar uma nova conversa.");

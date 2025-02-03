@@ -10,6 +10,6 @@ class ResponseError
 {
     public function responseError(string $message, HttpStatusCodeEnum $statusCode, HttpResponseLevelEnum $level): JsonResponse
     {
-        return response()->json(['message' => $message, 'status' => $statusCode->value, 'level' => $level->value], $statusCode);
+        return response()->json(['message' => $message, 'status' => $statusCode->value, 'level' => $level->value], $statusCode->value);
     }
 }

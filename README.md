@@ -32,7 +32,11 @@ NFCe e o sistema irá buscar os dados e salvar no banco de dados para posteriore
 - `make bakcnd-bash` Inicia os containers e entra no bash do backend
 
 ## Comandos para interagir com o bot
+- `/start` - Inicia uma nova conversa com o chatbot
 - `/nfce` - Inicia o processo de salvar uma NFCe no banco de dados
+- `/month` - Relatório do mês atual
+- `/purchase` - Relatório para ver uma das compras feitas - Em desenvolvimento
+- `/end` - Finaliza a conversa com o chatbot
 
 ## Acessos 
 - [PHP My Admin](http://localhost:8080) > Usuário `root` Senha `123`

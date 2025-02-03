@@ -19,7 +19,7 @@ class ValidateProcessedNfceUseCase
         $purchase = Purchase::where('nfce_id', $nfce->id)->first();
         $items = Product::where('purchase_id', $purchase->id)->count();
         ProductsQuantityNotMatchWithPurchaseException::throwIfDiff($purchase->total_items, $items, $nfce->id);
-        NfceNotProcessedException::throwIfNotProcessed($nfce, $nfce->id);
+        NfceNotProcessedException::throwIfNotProcessed($nfce);
         return true;
     }
 }
