@@ -3,11 +3,12 @@
 namespace App\Modules\ChatBot\Controller;
 
 use App\Modules\Nfce\UseCase\InsertByChatbot\InsertByChatbotUseCase;
+use chillerlan\QRCode\QRCode;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
-use Zxing\QrReader;
+use Throwable;
 
 readonly class ChatBotController
 {
@@ -123,9 +124,12 @@ readonly class ChatBotController
 
     protected function processQRCode(string $imagePath): ?string
     {
-        $reader = new QrReader($imagePath);
-        $qrCodeData = $reader->text();
-
-        return $qrCodeData ? $qrCodeData : null;
+        try{
+            $result = new QRCode()->readFromFile($imagePath);
+            return (string)$result;
+        }
+        catch(Throwable){
+            return null;
+        }
     }
 }
