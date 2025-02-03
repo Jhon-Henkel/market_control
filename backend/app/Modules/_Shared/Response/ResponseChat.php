@@ -19,6 +19,6 @@ class ResponseChat
     public static function interactWithUser(int|string $chatId, string $message): void
     {
         $urlSendMessage = sprintf("https://api.telegram.org/bot%s/sendMessage", config('app.telegram_token'));
-        Http::post($urlSendMessage, ['chat_id' => $chatId, 'text' => $message, 'parse_mode' => 'MarkdownV2']);
+        Http::post($urlSendMessage, ['chat_id' => $chatId, 'text' => $message]);
     }
 }
