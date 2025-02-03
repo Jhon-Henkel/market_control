@@ -40,7 +40,7 @@ readonly class ChatBotController
 
         if ($message === '/start') {
             Log::info('/start');
-            $this->interactWithUser($chatId, "Olá, bem-vindo ao Chatbot da NFC-e. Para começar, use um dos comandos disponíveis: \n**/nfce** -> Processar NFC-e");
+            $this->interactWithUser($chatId, "Olá, bem-vindo ao Chatbot do Market Control. Para começar, use um dos comandos disponíveis: \n\n/nfce -> Processar NFC-e\n/end -> Finalizar conversa");
             return response()->json(['status' => 'ok']);
         }
 
