@@ -18,8 +18,8 @@ class StartChatUseCase
     protected function getMenuOptions(): string
     {
         return "
-            /start -> Iniciar uma nova conversa
-            /nfce -> Processar NFC-e
-            /end -> Finalizar conversa\n";
+/start -> Iniciar uma nova conversa
+/nfce -> Processar NFC-e
+/end -> Finalizar conversa\n\n";
     }
 }
