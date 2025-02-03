@@ -140,6 +140,7 @@ readonly class ChatBotController
 
         $data = $response->json();
 
+        Log::info('QR Code Data: ' . json_encode($data));
         if (isset($data[0]['symbol'][0]['data'])) {
             return $data[0]['symbol'][0]['data'];
         }
