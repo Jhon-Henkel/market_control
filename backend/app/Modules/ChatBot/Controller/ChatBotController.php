@@ -47,7 +47,7 @@ readonly class ChatBotController
         $step = cache($cacheKey, 'default');
 
         if ($message === '/start') {
-            $this->startChatUseCase->execute($chatId);
+            $this->startChatUseCase->execute($chatId, $cacheKey);
             return ResponseChat::responseChat(ResponseChatEnum::Ok);
         }
 
