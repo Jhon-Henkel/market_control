@@ -39,9 +39,9 @@ readonly class MonthChatUseCase
             }
             $name = str_replace(' ', "\u{00A0}", $name);
             $value = number_format($produto['total_value'], 2, ',', '.');
-            $value .= "━━━━━━━━━━━━━━━━━\n";
 
             $message .= "🔹 $name\n          $quantity $unit - R$ $value\n";
+            $message .= "          ━━━━━━━━━━━━━━━━━\n";
         }
 
         return $message;
