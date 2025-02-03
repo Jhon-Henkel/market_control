@@ -132,10 +132,10 @@ readonly class ChatBotController
 //            Log::error('Erro ao processar QR Code: ' . $e->getMessage());
 //            return null;
 //        }
-        $url = 'https://api.qrserver.com/v1/read-qr-code/';
+        $url = 'https://zxing.org/w/decode';
 
         $response = Http::attach(
-            'file', file_get_contents($imagePath), 'qr_code_image.jpg'
+            'f', file_get_contents($imagePath), 'qr_code_image.jpg'
         )->post($url);
 
         $data = $response->json();
