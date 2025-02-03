@@ -63,6 +63,7 @@ readonly class ChatBotController
             return ResponseChat::responseChat($status, $chatId);
         }
 
+        ResponseChat::interactWithUser($chatId, "Comando inválido. Digite /start para iniciar uma nova conversa.");
         Log::info('Conversa finalizada');
         return ResponseChat::responseChat(ResponseChatEnum::Ok);
     }
