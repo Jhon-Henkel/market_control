@@ -138,7 +138,7 @@ readonly class ChatBotController
             'f', file_get_contents($imagePath), 'qr_code_image.jpg'
         )->post($url);
 
-        $data = $response->json();
+        $data = $response->body();
 
         Log::info('QR Code Data: ' . json_encode($data));
         if (isset($data[0]['symbol'][0]['data'])) {
