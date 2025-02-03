@@ -25,7 +25,7 @@ NFCe e o sistema irá buscar os dados e salvar no banco de dados para posteriore
       php artisan key:generate
     ```
 - Popular as variáveis de ambiente do arquivo `.env`.
-  - Caso tenha mais de um username permitido a acessar o app via telegram, adicione os usernames separados por vírgula na variável `APP_TELEGRAM_ALLOWED_USERNAMES`.
+  - Caso tenha mais de um username permitido a acessar o app via telegram, adicione os usernames (sem o @ na frente) separados por vírgula na variável `APP_TELEGRAM_ALLOWED_USERNAMES`.
   - Popular a variável `APP_TELEGRAM_BOT_TOKEN` com o token do bot criado no telegram.
 
 ## Comandos Make
