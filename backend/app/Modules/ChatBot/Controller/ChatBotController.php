@@ -71,7 +71,7 @@ readonly class ChatBotController
                 $imageContent = file_get_contents($imageUrl);
 
                 if (is_dir('/tmp') === false) {
-                    mkdir('/tmp');
+                    mkdir('/tmp', 777, true);
                 }
 
                 $imagePath = '/tmp/qr_code_image.jpg';
@@ -128,7 +128,8 @@ readonly class ChatBotController
             $result = new QRCode()->readFromFile($imagePath);
             return (string)$result;
         }
-        catch(Throwable){
+        catch(Throwable $e){
+            Log::error('Erro ao processar QR Code: ' . $e->getMessage());
             return null;
         }
     }
