@@ -57,6 +57,7 @@ readonly class ChatBotController
             cache([$cacheKey => 'waiting_nfce'], now()->addMinutes(5));
         } elseif ($step === 'waiting_nfce') {
             if (!filter_var($message, FILTER_VALIDATE_URL)) {
+                Log::error('Link nfce inválido');
                 $this->interactWithUser($chatId, "O link enviado não parece ser válido. Por favor, envie um link correto.");
                 return response()->json(['status' => 'invalid url']);
             }
@@ -64,10 +65,12 @@ readonly class ChatBotController
             $result = $this->insertByChatbotUseCase->execute($message);
 
             if ($result['status'] === 'error') {
+                Log::error('Erro ao processar nfce');
                 $this->interactWithUser($chatId, "Ocorreu um erro ao processar a NFC-e. Por favor, tente novamente.");
                 return response()->json(['status' => 'error to process nfce']);
             }
 
+            Log::info('NFC-e processada com sucesso');
             $this->interactWithUser($chatId, "NFC-e processada com sucesso!");
             cache()->forget($cacheKey);
         }
@@ -79,6 +82,6 @@ readonly class ChatBotController
     protected function interactWithUser(int|string $chatId, string $message): void
     {
         $urlSendMessage = sprintf("https://api.telegram.org/bot%s/sendMessage", config('app.telegram_token'));
-        Http::post($urlSendMessage, ['chat_id' => $chatId, 'text' => $message, 'parse_mode' => 'MarkdownV2']);
+        Http::post($urlSendMessage, ['chat_id' => $chatId, 'text' => $message]);
     }
 }
