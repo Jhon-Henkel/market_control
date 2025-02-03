@@ -24,10 +24,10 @@ jobs:
           port: ${{ secrets.SSH_PORT }}
           script: |
             cd ${{ secrets.SSH_APP_PATH }}
-            docker exec ma_app bash -c "php artisan down"
+            docker exec mc_app bash -c "php artisan down"
             git restore .
             git pull
-            docker exec ma_app bash -c "composer update --optimize-autoloader --no-dev"
-            docker exec ma_app bash -c "php artisan migrate --force"
-            docker exec ma_app bash -c "php artisan optimize"
-            docker exec ma_app bash -c "php artisan up"
+            docker exec mc_app bash -c "composer update --optimize-autoloader --no-dev"
+            docker exec mc_app bash -c "php artisan migrate --force"
+            docker exec mc_app bash -c "php artisan optimize"
+            docker exec mc_app bash -c "php artisan up"
