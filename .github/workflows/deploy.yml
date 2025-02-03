@@ -1,0 +1,33 @@
+name: Deploy
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      TZ: 'America/Sao_Paulo'
+
+    steps:
+      - name: 🔥 Configuring Checkout
+        uses: actions/checkout@v4
+
+      # Rodando etapas no servidor
+      - name: 📂 Deploy Backend
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          port: ${{ secrets.SSH_PORT }}
+          script: |
+            cd ${{ secrets.SSH_APP_PATH }}
+            docker exec ma_app bash -c "php artisan down"
+            git restore .
+            git pull
+            docker exec ma_app bash -c "composer update --optimize-autoloader --no-dev"
+            docker exec ma_app bash -c "php artisan migrate --force"
+            docker exec ma_app bash -c "php artisan optimize"
+            docker exec ma_app bash -c "php artisan up"
