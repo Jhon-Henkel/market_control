@@ -26,9 +26,9 @@ readonly class MonthChatUseCase
 
         $message = "📊 Resumo das Compras do Mês\n";
         $message .= "🛒 Total de Itens: $purchases[total_products]\n";
-        $message .= "💰 Valor Total: R$ $totalAmount\n\n";
+        $message .= "💰 Valor Total: R$ $totalAmount\n";
+        $message = "----------------------------\n\n\n";
         $message .= "📝 Lista de Compras:\n";
-        $message .= "__underline__\n";
 
         foreach ($purchases['products'] as $produto) {
             $quantity = $produto['quantity'];
