@@ -35,7 +35,7 @@ readonly class MonthChatUseCase
             $name = $produto['name'];
             $value = number_format($produto['total_value'], 2, ',', '.');
 
-            $message .= "🔹 $quantity $unit - R$ $value - **$name**\n";
+            $message .= "🔹 $quantity $unit - R$ $value - <b>$name</b><br>";
         }
 
         return $message;
