@@ -20,7 +20,6 @@ class StartChatUseCase
         return "
             /start -> Iniciar uma nova conversa
             /nfce -> Processar NFC-e
-            /end -> Finalizar conversa
-        ";
+            /end -> Finalizar conversa\n";
     }
 }
