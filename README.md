@@ -1,6 +1,6 @@
 <p align="center">
-  <a href="https://skillicons.dev">
-    <img src="https://skillicons.dev/icons?i=docker,php,mysql,laravel" alt="tecnologias"/>
+  <a href="https://github.com/lelouchfr/skill-icons">
+    <img src="https://go-skill-icons.vercel.app/api/icons?i=docker,php,mysql,laravel,telegram" alt="tecnologias"/>
   </a>
 </p>
 
