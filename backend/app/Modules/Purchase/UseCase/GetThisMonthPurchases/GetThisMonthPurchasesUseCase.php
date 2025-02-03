@@ -29,6 +29,7 @@ class GetThisMonthPurchasesUseCase
                 $products[$product->name]['total_value'] += $product->total_price;
             }
         }
+        ksort($products);
         return [
             'total_amount' => $totalAmount,
             'total_products' => count($products),
