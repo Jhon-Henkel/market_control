@@ -124,14 +124,6 @@ readonly class ChatBotController
 
     protected function processQRCode(string $imagePath): ?string
     {
-//        try{
-//            $result = new QRCode()->readFromFile($imagePath);
-//            return (string)$result;
-//        }
-//        catch(Throwable $e){
-//            Log::error('Erro ao processar QR Code: ' . $e->getMessage());
-//            return null;
-//        }
         $url = 'https://zxing.org/w/decode';
 
         $response = Http::attach(
@@ -141,10 +133,16 @@ readonly class ChatBotController
         $data = $response->body();
 
         Log::info('QR Code Data: ' . json_encode($data));
-        if (isset($data[0]['symbol'][0]['data'])) {
-            return $data[0]['symbol'][0]['data'];
+
+        $dom = new \DOMDocument();
+        @$dom->loadHTML($data);
+        $preTags = $dom->getElementsByTagName('pre');
+
+        if ($preTags->length > 0) {
+            return trim($preTags->item(0)->nodeValue); // Retorna o conteúdo do primeiro <pre>
         }
 
+        Log::error('QR Code não contém uma URL válida.');
         return null;
     }
 }
