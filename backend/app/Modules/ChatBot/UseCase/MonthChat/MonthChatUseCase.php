@@ -33,7 +33,7 @@ readonly class MonthChatUseCase
         foreach ($purchases['products'] as $produto) {
             $quantity = $produto['quantity'];
             $unit = $produto['unit'];
-            $name = str_replace(' ', "\u{00A0}", $produto['name']);
+            $name = str_replace(' ', "\u{00A0}", substr($produto['name'], 0, 35));
             $value = number_format($produto['total_value'], 2, ',', '.');
 
             $message .= "🔹 $name\n     $quantity $unit - R$ $value\n";
