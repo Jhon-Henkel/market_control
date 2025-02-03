@@ -11,14 +11,16 @@ class StartChatUseCase
     {
         Log::info('/start');
         $message = "Olá, bem-vindo ao Chatbot do Market Control. Para começar, use um dos comandos disponíveis: \n";
-        ResponseChat::interactWithUser($chatId, $message . $this->getMenuOptions());
+        $endMessage = "Importante lembrar que o chat será finalizado após 5 minutos de inatividade.";
+        ResponseChat::interactWithUser($chatId, $message . $this->getMenuOptions() . $endMessage);
     }
 
     protected function getMenuOptions(): string
     {
         return "
-            \n/nfce -> Processar NFC-e
-            \n/end -> Finalizar conversa
+            /start -> Iniciar uma nova conversa
+            /nfce -> Processar NFC-e
+            /end -> Finalizar conversa
         ";
     }
 }
