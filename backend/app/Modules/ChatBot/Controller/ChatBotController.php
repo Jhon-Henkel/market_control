@@ -58,6 +58,7 @@ readonly class ChatBotController
 
         if ($message === '/nfce') {
             $this->nfceStartUseCase->execute($chatId, $cacheKey);
+            return ResponseChat::responseChat(ResponseChatEnum::Ok);
         } elseif ($step === 'waiting_nfce') {
             $status = $this->nfceProcessUseCase->execute($data, $chatId, $cacheKey, $message);
             return ResponseChat::responseChat($status, $chatId);
