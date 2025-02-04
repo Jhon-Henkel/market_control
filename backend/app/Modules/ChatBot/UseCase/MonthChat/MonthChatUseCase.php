@@ -28,7 +28,7 @@ readonly class MonthChatUseCase
         $message .= "🛒 Total de Itens: $purchases[total_products]\n";
         $message .= "💰 Valor Total: R$ $totalAmount\n";
         $message .= "━━━━━━━━━━━━━━━━━\n\n";
-        $message .= "📝 Lista de Compras:\n";
+        $message .= "📝 Lista de Compras:\n\n";
 
         foreach ($purchases['products'] as $produto) {
             $quantity = $produto['quantity'];
@@ -43,7 +43,7 @@ readonly class MonthChatUseCase
             $message .= "🔹 $name\n          $quantity $unit - R$ $value";
             $message .= "          ━━━━━━━━━━━━━━━━━\n";
         }
-        $message .= "Fim da Lista\n";
+        $message .= "Fim da Lista!\n";
 
         return $message;
     }
