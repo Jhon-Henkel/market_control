@@ -62,7 +62,6 @@ class NfceProcessUseCase
 
         Log::info('NFC-e processada com sucesso');
         ResponseChat::interactWithUser($chatId, "NFC-e processada com sucesso!");
-        ResponseChat::interactWithUser($chatId, "Chat Finalizado!");
         cache()->forget($cacheKey);
         return ResponseChatEnum::Ok;
     }

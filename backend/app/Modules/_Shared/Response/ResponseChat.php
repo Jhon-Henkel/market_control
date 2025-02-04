@@ -21,7 +21,13 @@ class ResponseChat
         $urlSendMessage = sprintf("https://api.telegram.org/bot%s/sendMessage", config('app.telegram_token'));
         $payload = ['chat_id' => $chatId, 'text' => $message];
         if ($yesOrNoCallback) {
-            $payload['reply_markup'] = json_encode(['inline_keyboard' => [[['text' => 'Sim', 'callback_data' => 'yes'], ['text' => 'Não', 'callback_data' => 'no']]],]);
+            $payload['reply_markup'] = json_encode([
+                'inline_keyboard' => [
+                    [['text' => 'Sim'], ['text' => 'Não']],
+                    'resize_keyboard' => true,
+                    'one_time_keyboard' => true,
+                ],
+            ]);
         }
         Http::post($urlSendMessage, $payload);
     }
