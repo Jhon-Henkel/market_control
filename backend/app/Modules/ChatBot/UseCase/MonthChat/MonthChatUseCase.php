@@ -22,6 +22,9 @@ readonly class MonthChatUseCase
 
     protected function formatToUser(array $purchases): string
     {
+        if (empty($purchases)) {
+            return "Nenhuma compra realizada este mês.";
+        }
         $totalAmount = number_format($purchases['total_amount'], 2, ',', '.');
 
         $message = "📊 Resumo das Compras do Mês\n";

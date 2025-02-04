@@ -11,7 +11,9 @@ class GetThisMonthPurchasesUseCase
     public function execute(): array
     {
         $purchases = Purchase::whereMonth('created_at', Date::now()->month)->get();
-        $totalAmount = $purchases->sum('total_value');
+        if ($purchases->isEmpty()) {
+            return [];
+        }
         $products = [];
         /** @var Purchase $purchase */
         foreach ($purchases as $purchase) {
@@ -31,7 +33,7 @@ class GetThisMonthPurchasesUseCase
         }
         ksort($products);
         return [
-            'total_amount' => $totalAmount,
+            'total_amount' => $purchases->sum('total_value'),
             'total_products' => count($products),
             'products' => array_values($products),
         ];

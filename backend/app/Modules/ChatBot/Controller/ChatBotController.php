@@ -63,6 +63,10 @@ readonly class ChatBotController
             return ResponseChat::responseChat(ResponseChatEnum::Ok);
         } elseif ($step === 'waiting_nfce') {
             $status = $this->nfceProcessUseCase->execute($data, $chatId, $cacheKey, $message);
+            if ($status === ResponseChatEnum::InvalidUrl) {
+                $this->nfceStartUseCase->execute($chatId, $cacheKey);
+                return ResponseChat::responseChat(ResponseChatEnum::Ok);
+            }
             return ResponseChat::responseChat($status, $chatId);
         }
 
