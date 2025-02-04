@@ -30,18 +30,17 @@ readonly class ChatBotController
     {
         $data = $request->all();
 
-        if (! isset($data['message']) && ! isset($data['callback_query'])) {
+        if (isset($data['callback_query'])) {
+            $status = $this->processCallbackQuery($data);
+            return ResponseChat::responseChat($status, $data['callback_query']['message']['chat']['id']);
+        }
+
+        if (! isset($data['message'])) {
             Log::info('Nenhuma mensagem recebida');
             return ResponseChat::responseChat(ResponseChatEnum::NoMessage);
         }
 
-        $chatId = null;
-        if (isset($data['message'])) {
-            $chatId = $data['message']['chat']['id'];
-        } elseif (isset($data['callback_query'])) {
-            $chatId = $data['callback_query']['message']['chat']['id'];
-        }
-
+        $chatId = $data['message']['chat']['id'];
         $message = strtolower($data['message']['text'] ?? '');
         $username = $data['message']['from']['username'] ?? 'Sem username';
         Log::info("Chat ID: {$chatId} - Mensagem: {$message} - Username: {$username}");
@@ -69,9 +68,6 @@ readonly class ChatBotController
             return ResponseChat::responseChat(ResponseChatEnum::Ok);
         } elseif ($step === 'waiting_nfce') {
             $status = $this->stepWaitingNfce($data, $chatId, $cacheKey, $message);
-            return ResponseChat::responseChat($status, $chatId);
-        } elseif ($step === 'finances_in_hands_question') {
-            $status = $this->statusFinancesInHandsQuestion($data, $chatId);
             return ResponseChat::responseChat($status, $chatId);
         }
 
@@ -102,6 +98,19 @@ readonly class ChatBotController
         return $status;
     }
 
+    protected function processCallbackQuery(array $data): ResponseChatEnum
+    {
+        $chatId = $data['callback_query']['message']['chat']['id'];
+        $cacheKey = "telegram_{$chatId}_step";
+        $step = cache($cacheKey, 'default');
+
+        if ($step === 'finances_in_hands_question') {
+            return $this->statusFinancesInHandsQuestion($data, $chatId);
+        }
+
+        return ResponseChatEnum::InvalidOption;
+    }
+
     protected function statusFinancesInHandsQuestion(array $data, string $chatId): ResponseChatEnum
     {
         if (isset($data['callback_query'])) {
@@ -111,11 +120,11 @@ readonly class ChatBotController
 
             if ($callbackData === 'yes') {
                 Log::info('Sim, marcar no Finanças na mão');
-                ResponseChat::interactWithUser($chatId, "Marcando...");
+                ResponseChat::interactWithUser($callbackQuery['message']['chat']['id'], "Marcando...");
                 return ResponseChatEnum::Ok;
             } elseif ($callbackData === 'no') {
                 Log::info('Não, não marcar no Finanças na mão');
-                ResponseChat::interactWithUser($chatId, "Operação cancelada.");
+                ResponseChat::interactWithUser($callbackQuery['message']['chat']['id'], "Operação cancelada.");
                 return ResponseChatEnum::CancelOption;
             }
         }
