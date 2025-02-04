@@ -30,7 +30,7 @@ readonly class ChatBotController
     {
         $data = $request->all();
 
-        if (! isset($data['message'])) {
+        if (! isset($data['message']) && ! isset($data['callback_query'])) {
             Log::info('Nenhuma mensagem recebida');
             return ResponseChat::responseChat(ResponseChatEnum::NoMessage);
         }
