@@ -23,12 +23,21 @@ class ResponseChat
         if ($yesOrNoCallback) {
             $payload['reply_markup'] = json_encode([
                 'inline_keyboard' => [
-                    [['text' => 'Sim'], ['text' => 'Não']],
+                    [
+                        ['text' => 'Sim', 'callback_data' => 'yes'],
+                        ['text' => 'Não', 'callback_data' => 'no']
+                    ],
                     'resize_keyboard' => true,
                     'one_time_keyboard' => true,
                 ],
             ]);
         }
         Http::post($urlSendMessage, $payload);
+    }
+
+    public static function answerCallbackQuery($callbackId): void
+    {
+        $url = sprintf("https://api.telegram.org/bot%s/answerCallbackQuery", config('app.telegram_token'));
+        Http::post($url, ['callback_query_id' => $callbackId]);
     }
 }

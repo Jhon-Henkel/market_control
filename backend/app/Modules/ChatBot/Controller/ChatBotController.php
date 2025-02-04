@@ -96,11 +96,20 @@ readonly class ChatBotController
 
     protected function statusFinancesInHandsQuestion(array $data, string $chatId, string $message): ResponseChatEnum
     {
-        if ($message === 'sim') {
-            ResponseChat::interactWithUser($chatId, "Marcando...");
-        } else if ($message === 'não') {
-            ResponseChat::interactWithUser($chatId, "Operação cancelada.");
+        if (isset($data['callback_query'])) {
+            $callbackQuery = $data['callback_query'];
+            $callbackData = $callbackQuery['data'];
+            ResponseChat::answerCallbackQuery($callbackQuery['id']);
+
+            if ($callbackData === 'yes') {
+                ResponseChat::interactWithUser($callbackQuery['message']['chat']['id'], "Marcando...");
+                return ResponseChatEnum::Ok;
+            } elseif ($callbackData === 'no') {
+                ResponseChat::interactWithUser($callbackQuery['message']['chat']['id'], "Operação cancelada.");
+                return ResponseChatEnum::CancelOption;
+            }
         }
-        return ResponseChatEnum::Ok;
+        ResponseChat::interactWithUser($chatId, "Comando inválido. Digite /start para iniciar uma nova conversa.");
+        return ResponseChatEnum::InvalidOption;
     }
 }
