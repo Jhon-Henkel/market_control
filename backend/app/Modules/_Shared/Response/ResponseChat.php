@@ -26,7 +26,8 @@ class ResponseChat
                     [
                         ['text' => 'Sim', 'callback_data' => 'yes'],
                         ['text' => 'Não', 'callback_data' => 'no']
-                    ]
+                    ],
+                    'one_time_keyboard' => true,
                 ],
             ]);
         }
