@@ -16,9 +16,13 @@ class ResponseChat
         return response()->json(['status' => $status->value]);
     }
 
-    public static function interactWithUser(int|string $chatId, string $message): void
+    public static function interactWithUser(int|string $chatId, string $message, bool $yesOrNoCallback = false): void
     {
         $urlSendMessage = sprintf("https://api.telegram.org/bot%s/sendMessage", config('app.telegram_token'));
-        Http::post($urlSendMessage, ['chat_id' => $chatId, 'text' => $message]);
+        $payload = ['chat_id' => $chatId, 'text' => $message];
+        if ($yesOrNoCallback) {
+            $payload['reply_markup'] = json_encode(['inline_keyboard' => [[['text' => 'Sim', 'callback_data' => 'yes'], ['text' => 'Não', 'callback_data' => 'no']]],]);
+        }
+        Http::post($urlSendMessage, $payload);
     }
 }

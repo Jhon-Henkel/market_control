@@ -5,6 +5,7 @@ namespace App\Modules\ChatBot\Controller;
 use App\Modules\_Shared\Response\ResponseChat;
 use App\Modules\ChatBot\Enum\ResponseChatEnum;
 use App\Modules\ChatBot\UseCase\EndChat\EndChatUseCase;
+use App\Modules\ChatBot\UseCase\FinancesInHandsQuestion\FinancesInHandsQuestionUseCase;
 use App\Modules\ChatBot\UseCase\MonthChat\MonthChatUseCase;
 use App\Modules\ChatBot\UseCase\NfceProcess\NfceProcessUseCase;
 use App\Modules\ChatBot\UseCase\NfceStart\NfceStartUseCase;
@@ -20,7 +21,8 @@ readonly class ChatBotController
         private EndChatUseCase $endChatUseCase,
         private NfceStartUseCase $nfceStartUseCase,
         private NfceProcessUseCase $nfceProcessUseCase,
-        private MonthChatUseCase $monthChatUseCase
+        private MonthChatUseCase $monthChatUseCase,
+        private FinancesInHandsQuestionUseCase $financesInHandsQuestionUseCase,
     ) {
     }
 
@@ -62,11 +64,10 @@ readonly class ChatBotController
             $this->nfceStartUseCase->execute($chatId, $cacheKey);
             return ResponseChat::responseChat(ResponseChatEnum::Ok);
         } elseif ($step === 'waiting_nfce') {
-            $status = $this->nfceProcessUseCase->execute($data, $chatId, $cacheKey, $message);
-            if ($status === ResponseChatEnum::InvalidUrl) {
-                $this->nfceStartUseCase->execute($chatId, $cacheKey);
-                return ResponseChat::responseChat(ResponseChatEnum::Ok);
-            }
+            $status = $this->stepWaitingNfce($data, $chatId, $cacheKey, $message);
+            return ResponseChat::responseChat($status, $chatId);
+        } elseif ($step === 'finances_in_hands_question') {
+            $status = $this->statusFinancesInHandsQuestion($data, $chatId);
             return ResponseChat::responseChat($status, $chatId);
         }
 
@@ -78,5 +79,34 @@ readonly class ChatBotController
         ResponseChat::interactWithUser($chatId, "Comando inválido. Digite /start para iniciar uma nova conversa.");
         Log::info('Conversa finalizada');
         return ResponseChat::responseChat(ResponseChatEnum::Ok);
+    }
+
+    protected function stepWaitingNfce(array $data, string $chatId, string $cacheKey, string $message): ResponseChatEnum
+    {
+        $status = $this->nfceProcessUseCase->execute($data, $chatId, $cacheKey, $message);
+        if ($status === ResponseChatEnum::InvalidUrl) {
+            $this->nfceStartUseCase->execute($chatId, $cacheKey);
+            return ResponseChatEnum::Ok;
+        } elseif ($status === ResponseChatEnum::Ok) {
+            $this->financesInHandsQuestionUseCase->execute($chatId, $cacheKey);
+            return ResponseChatEnum::Ok;
+        }
+        return $status;
+    }
+
+    protected function statusFinancesInHandsQuestion(array $data, string $chatId): ResponseChatEnum
+    {
+        if (isset($data['callback_query'])) {
+            $callbackData = $data['callback_query']['data'];
+            $chatId = $data['callback_query']['message']['chat']['id'];
+            if ($callbackData === 'yes') {
+                ResponseChat::interactWithUser($chatId, "Marcando...");
+            } else {
+                ResponseChat::interactWithUser($chatId, "Operação cancelada.");
+            }
+            return ResponseChatEnum::Ok;
+        }
+        ResponseChat::interactWithUser($chatId, "Operação cancelada.");
+        return ResponseChatEnum::Ok;
     }
 }
