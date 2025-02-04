@@ -118,15 +118,19 @@ readonly class ChatBotController
             $callbackData = $callbackQuery['data'];
             ResponseChat::answerCallbackQuery($callbackQuery['id']);
 
-            if ($callbackData === 'yes') {
-                Log::info('Sim, marcar no Finanças na mão');
-                ResponseChat::interactWithUser($callbackQuery['message']['chat']['id'], "Marcando...");
-                return ResponseChatEnum::Ok;
-            } elseif ($callbackData === 'no') {
-                Log::info('Não, não marcar no Finanças na mão');
-                ResponseChat::interactWithUser($callbackQuery['message']['chat']['id'], "Operação cancelada.");
-                return ResponseChatEnum::CancelOption;
-            }
+            $newText = ($callbackData === 'yes') ? "Você escolheu: Sim!" : "Você escolheu: Não!";
+            Log::info($newText);
+
+            ResponseChat::editMessage($chatId, $callbackQuery['message']['message_id'], $newText);
+
+//            if ($callbackData === 'yes') {
+//                ResponseChat::interactWithUser($callbackQuery['message']['chat']['id'], "Marcando...");
+//                return ResponseChatEnum::Ok;
+//            } elseif ($callbackData === 'no') {
+//                Log::info('Não, não marcar no Finanças na mão');
+//                ResponseChat::interactWithUser($callbackQuery['message']['chat']['id'], "Operação cancelada.");
+//                return ResponseChatEnum::CancelOption;
+//            }
         }
         ResponseChat::interactWithUser($chatId, "Comando inválido. Digite /start para iniciar uma nova conversa.");
         return ResponseChatEnum::InvalidOption;
