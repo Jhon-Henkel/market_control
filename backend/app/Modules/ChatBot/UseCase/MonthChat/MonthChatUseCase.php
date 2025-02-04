@@ -34,7 +34,7 @@ readonly class MonthChatUseCase
             $quantity = $produto['quantity'];
             $unit = $produto['unit'];
             $name = substr($produto['name'], 0, 30);
-            if (strlen($produto['name']) === 30) {
+            if (strlen($name) === 30) {
                 $name .= "...";
             }
             $name = str_replace(' ', "\u{00A0}", $name);
