@@ -10,7 +10,7 @@ class NfceStartUseCase
     public function execute(string $chatId, string $cacheKey): void
     {
         Log::info('/nfce');
-        $message = "Por favor, envie o link ou a foto do QR-Code da NFC-e. \nImportante a foto tem que ser somente do QR-Code, sem informações adicionais.";
+        $message = "Por favor, envie o link ou a foto do QR-Code da NFC-e. \n\nImportante a foto tem que ser somente do QR-Code! Sem informações adicionais.";
         ResponseChat::interactWithUser($chatId, $message);
         cache([$cacheKey => 'waiting_nfce'], now()->addMinutes(5));
     }

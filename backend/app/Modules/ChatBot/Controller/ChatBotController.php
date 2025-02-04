@@ -67,7 +67,7 @@ readonly class ChatBotController
             $status = $this->stepWaitingNfce($data, $chatId, $cacheKey, $message);
             return ResponseChat::responseChat($status, $chatId);
         } elseif ($step === 'finances_in_hands_question') {
-            $status = $this->statusFinancesInHandsQuestion($data, $chatId, $message);
+            $status = $this->statusFinancesInHandsQuestion($data, $chatId);
             return ResponseChat::responseChat($status, $chatId);
         }
 
@@ -94,7 +94,7 @@ readonly class ChatBotController
         return $status;
     }
 
-    protected function statusFinancesInHandsQuestion(array $data, string $chatId, string $message): ResponseChatEnum
+    protected function statusFinancesInHandsQuestion(array $data, string $chatId): ResponseChatEnum
     {
         if (isset($data['callback_query'])) {
             $callbackQuery = $data['callback_query'];
@@ -102,9 +102,11 @@ readonly class ChatBotController
             ResponseChat::answerCallbackQuery($callbackQuery['id']);
 
             if ($callbackData === 'yes') {
+                Log::info('Sim, marcar no Finanças na mão');
                 ResponseChat::interactWithUser($callbackQuery['message']['chat']['id'], "Marcando...");
                 return ResponseChatEnum::Ok;
             } elseif ($callbackData === 'no') {
+                Log::info('Não, não marcar no Finanças na mão');
                 ResponseChat::interactWithUser($callbackQuery['message']['chat']['id'], "Operação cancelada.");
                 return ResponseChatEnum::CancelOption;
             }
