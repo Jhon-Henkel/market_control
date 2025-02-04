@@ -28,8 +28,6 @@ readonly class ChatBotController
 
     public function __invoke(Request $request): JsonResponse
     {
-        Log::info('Iniciando Conversa');
-
         $data = $request->all();
 
         if (! isset($data['message'])) {
@@ -77,7 +75,6 @@ readonly class ChatBotController
         }
 
         ResponseChat::interactWithUser($chatId, "Comando inválido. Digite /start para iniciar uma nova conversa.");
-        Log::info('Conversa finalizada');
         return ResponseChat::responseChat(ResponseChatEnum::Ok);
     }
 
