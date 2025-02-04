@@ -6,6 +6,7 @@ use App\Modules\_Shared\Response\ResponseChat;
 use App\Modules\ChatBot\Enum\ResponseChatEnum;
 use App\Modules\ChatBot\UseCase\EndChat\EndChatUseCase;
 use App\Modules\ChatBot\UseCase\FinancesInHandsQuestion\FinancesInHandsQuestionUseCase;
+use App\Modules\ChatBot\UseCase\FinancesInHandsQuestionProcess\FinancesInHandsQuestionProcessUseCase;
 use App\Modules\ChatBot\UseCase\MonthChat\MonthChatUseCase;
 use App\Modules\ChatBot\UseCase\NfceProcess\NfceProcessUseCase;
 use App\Modules\ChatBot\UseCase\NfceStart\NfceStartUseCase;
@@ -23,6 +24,7 @@ readonly class ChatBotController
         private NfceProcessUseCase $nfceProcessUseCase,
         private MonthChatUseCase $monthChatUseCase,
         private FinancesInHandsQuestionUseCase $financesInHandsQuestionUseCase,
+        private FinancesInHandsQuestionProcessUseCase $financesInHandsQuestionProcessUseCase,
     ) {
     }
 
@@ -105,35 +107,9 @@ readonly class ChatBotController
         $step = cache($cacheKey, 'default');
 
         if ($step === 'finances_in_hands_question') {
-            return $this->statusFinancesInHandsQuestion($data, $chatId);
+            return $this->financesInHandsQuestionProcessUseCase->execute($data, $chatId);
         }
 
-        return ResponseChatEnum::InvalidOption;
-    }
-
-    protected function statusFinancesInHandsQuestion(array $data, string $chatId): ResponseChatEnum
-    {
-        if (isset($data['callback_query'])) {
-            $callbackQuery = $data['callback_query'];
-            $callbackData = $callbackQuery['data'];
-            ResponseChat::answerCallbackQuery($callbackQuery['id']);
-
-            $newText = ($callbackData === 'yes') ? "Você escolheu: Sim!" : "Você escolheu: Não!";
-            Log::info($newText);
-
-            ResponseChat::editMessage($chatId, $callbackQuery['message']['message_id'], $newText);
-            return ResponseChatEnum::Ok;
-
-//            if ($callbackData === 'yes') {
-//                ResponseChat::interactWithUser($callbackQuery['message']['chat']['id'], "Marcando...");
-//                return ResponseChatEnum::Ok;
-//            } elseif ($callbackData === 'no') {
-//                Log::info('Não, não marcar no Finanças na mão');
-//                ResponseChat::interactWithUser($callbackQuery['message']['chat']['id'], "Operação cancelada.");
-//                return ResponseChatEnum::CancelOption;
-//            }
-        }
-        ResponseChat::interactWithUser($chatId, "Comando inválido. Digite /start para iniciar uma nova conversa.");
         return ResponseChatEnum::InvalidOption;
     }
 }
