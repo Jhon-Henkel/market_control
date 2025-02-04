@@ -122,6 +122,7 @@ readonly class ChatBotController
             Log::info($newText);
 
             ResponseChat::editMessage($chatId, $callbackQuery['message']['message_id'], $newText);
+            return ResponseChatEnum::Ok;
 
 //            if ($callbackData === 'yes') {
 //                ResponseChat::interactWithUser($callbackQuery['message']['chat']['id'], "Marcando...");
