@@ -81,6 +81,10 @@ readonly class ChatBotController
     protected function stepWaitingNfce(array $data, string $chatId, string $cacheKey, string $message): ResponseChatEnum
     {
         $status = $this->nfceProcessUseCase->execute($data, $chatId, $cacheKey, $message);
+
+        // linha abaixo (86) somente para teste - apagar depois
+        $this->financesInHandsQuestionUseCase->execute($chatId, $cacheKey);
+
         if ($status === ResponseChatEnum::InvalidUrl) {
             $this->nfceStartUseCase->execute($chatId, $cacheKey);
             return ResponseChatEnum::Ok;
