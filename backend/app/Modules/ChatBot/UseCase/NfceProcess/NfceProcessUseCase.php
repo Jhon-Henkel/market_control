@@ -54,7 +54,11 @@ class NfceProcessUseCase
 
         $result = $this->insertByChatbotUseCase->execute($url);
 
-        if ($result['status'] === 'error') {
+        if ($result['status'] === 'already_processed') {
+            Log::info('Nfce já processada anteriormente!');
+            ResponseChat::interactWithUser($chatId, "Essa NFC-e já foi processada anteriormente.");
+            return ResponseChatEnum::NfceAlreadyProcessed;
+        } elseif ($result['status'] === 'error') {
             Log::error('Erro ao processar nfce');
             ResponseChat::interactWithUser($chatId, "Ocorreu um erro ao processar a NFC-e. Por favor, tente novamente.");
             return ResponseChatEnum::ErrorToProcessNfce;

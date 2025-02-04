@@ -37,7 +37,7 @@ class InsertByChatbotUseCase
 
             $isValid = $this->validateProcessedNfceUseCase->execute($dataArray['fiscal_data']['key']);
             if ($isValid) {
-                return ['status' => 'ok'];
+                return ['status' => 'already_processed'];
             }
 
             $nfceInputDTO = $this->nfceFactory->makeInputDtoByArray($dataArray['fiscal_data']);

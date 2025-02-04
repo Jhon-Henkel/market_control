@@ -11,4 +11,5 @@ enum ResponseChatEnum: string
     case Unauthorized = 'unauthorized';
     case InvalidUrl = 'invalid url';
     case ErrorToProcessNfce = 'error to process nfce';
+    case NfceAlreadyProcessed = 'nfce already processed';
 }
