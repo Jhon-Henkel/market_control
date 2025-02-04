@@ -35,7 +35,13 @@ readonly class ChatBotController
             return ResponseChat::responseChat(ResponseChatEnum::NoMessage);
         }
 
-        $chatId = $data['message']['chat']['id'];
+        $chatId = null;
+        if (isset($data['message'])) {
+            $chatId = $data['message']['chat']['id'];
+        } elseif (isset($data['callback_query'])) {
+            $chatId = $data['callback_query']['message']['chat']['id'];
+        }
+
         $message = strtolower($data['message']['text'] ?? '');
         $username = $data['message']['from']['username'] ?? 'Sem username';
         Log::info("Chat ID: {$chatId} - Mensagem: {$message} - Username: {$username}");
@@ -105,11 +111,11 @@ readonly class ChatBotController
 
             if ($callbackData === 'yes') {
                 Log::info('Sim, marcar no Finanças na mão');
-                ResponseChat::interactWithUser($callbackQuery['message']['chat']['id'], "Marcando...");
+                ResponseChat::interactWithUser($chatId, "Marcando...");
                 return ResponseChatEnum::Ok;
             } elseif ($callbackData === 'no') {
                 Log::info('Não, não marcar no Finanças na mão');
-                ResponseChat::interactWithUser($callbackQuery['message']['chat']['id'], "Operação cancelada.");
+                ResponseChat::interactWithUser($chatId, "Operação cancelada.");
                 return ResponseChatEnum::CancelOption;
             }
         }
