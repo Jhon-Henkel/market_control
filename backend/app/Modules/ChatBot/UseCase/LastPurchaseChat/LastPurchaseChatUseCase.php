@@ -48,14 +48,14 @@ readonly class LastPurchaseChatUseCase
     {
         $return = '';
         foreach ($products as $product) {
-            $name = substr($product->name, 0, 30);
+            $name = substr($product['name'], 0, 30);
             if (strlen($name) === 30) {
                 $name .= "...";
             }
             $name = str_replace(' ', "\u{00A0}", $name);
-            $value = number_format($product->total_value, 2, ',', '.');
+            $value = number_format($product['total_value'], 2, ',', '.');
 
-            $return .= "🔹 $name\n          $product->quantity $product->unit - R$ $value";
+            $return .= "🔹 $name\n          $product[quantity] $product[unit] - R$ $value";
             $return .= "          ━━━━━━━━━━━━━━━━━\n";
         }
 

@@ -11,7 +11,7 @@ class GetLastPurchaseUseCase
         $purchase = Purchase::orderBy('id', 'desc')->first();
         return [
             'purchase' => $purchase,
-            'products' => $purchase->products
+            'products' => $purchase->products->toArray()
         ];
     }
 }
