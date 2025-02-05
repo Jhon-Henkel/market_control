@@ -4,11 +4,16 @@ namespace App\Modules\ChatBot\UseCase\FinancesInHandsQuestionProcess;
 
 use App\Modules\_Shared\Response\ResponseChat;
 use App\Modules\ChatBot\Enum\ResponseChatEnum;
+use App\Modules\ChatBot\UseCase\FinancesInHandsWalletList\FinancesInHandsWalletListUseCase;
 use Illuminate\Support\Facades\Log;
 
-class FinancesInHandsQuestionProcessUseCase
+readonly class FinancesInHandsQuestionProcessUseCase
 {
-    public function execute(array $data, string $chatId): ResponseChatEnum
+    public function __construct(private FinancesInHandsWalletListUseCase $financesInHandsWalletList)
+    {
+    }
+
+    public function execute(array $data, string $chatId, string $cacheKey): ResponseChatEnum
     {
         if (isset($data['callback_query'])) {
             $callbackQuery = $data['callback_query'];
@@ -21,8 +26,7 @@ class FinancesInHandsQuestionProcessUseCase
             ResponseChat::editMessage($chatId, $callbackQuery['message']['message_id'], $newText);
 
             if ($callbackData === 'yes') {
-                // questionar qual a carteira, dando uma lista com as carteiras...
-                ResponseChat::interactWithUser($chatId, "Marcando...");
+                $this->financesInHandsWalletList->execute($chatId, $cacheKey);
                 return ResponseChatEnum::Ok;
             } elseif ($callbackData === 'no') {
                 ResponseChat::interactWithUser($chatId, "Operação cancelada.");

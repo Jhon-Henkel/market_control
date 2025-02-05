@@ -7,6 +7,7 @@ use App\Modules\ChatBot\Enum\ResponseChatEnum;
 use App\Modules\ChatBot\UseCase\EndChat\EndChatUseCase;
 use App\Modules\ChatBot\UseCase\FinancesInHandsQuestion\FinancesInHandsQuestionUseCase;
 use App\Modules\ChatBot\UseCase\FinancesInHandsQuestionProcess\FinancesInHandsQuestionProcessUseCase;
+use App\Modules\ChatBot\UseCase\FinancesInHandsWalletList\FinancesInHandsWalletListUseCase;
 use App\Modules\ChatBot\UseCase\MonthChat\MonthChatUseCase;
 use App\Modules\ChatBot\UseCase\NfceProcess\NfceProcessUseCase;
 use App\Modules\ChatBot\UseCase\NfceStart\NfceStartUseCase;
@@ -25,6 +26,7 @@ readonly class ChatBotController
         private MonthChatUseCase $monthChatUseCase,
         private FinancesInHandsQuestionUseCase $financesInHandsQuestionUseCase,
         private FinancesInHandsQuestionProcessUseCase $financesInHandsQuestionProcessUseCase,
+        private FinancesInHandsWalletListUseCase $financesInHandsWalletList
     ) {
     }
 
@@ -71,6 +73,20 @@ readonly class ChatBotController
         } elseif ($step === 'waiting_nfce') {
             $status = $this->stepWaitingNfce($data, $chatId, $cacheKey, $message);
             return ResponseChat::responseChat($status, $chatId);
+        } elseif ($step === 'finances_in_hands_wallet_list') {
+            // apos testar, mover para um use case
+            Log::info('Finanças na mão - Carteira Selecionada');
+            $message = (int)$message;
+            $ids = json_decode(cache($cacheKey . '_wallets'), true);
+            if (! in_array($message, $ids)) {
+                ResponseChat::interactWithUser($chatId, "Carteira inválida. Digite o número da carteira que deseja usar.");
+                $this->financesInHandsWalletList->execute($chatId, $cacheKey);
+                return ResponseChat::responseChat(ResponseChatEnum::Ok);
+            }
+
+            Log::info('Carteira selecionada: ' . $message);
+
+            return ResponseChat::responseChat(ResponseChatEnum::Ok);
         }
 
         if ($message === '/month') {
@@ -107,7 +123,7 @@ readonly class ChatBotController
         $step = cache($cacheKey, 'default');
 
         if ($step === 'finances_in_hands_question') {
-            return $this->financesInHandsQuestionProcessUseCase->execute($data, $chatId);
+            return $this->financesInHandsQuestionProcessUseCase->execute($data, $chatId, $cacheKey);
         }
 
         return ResponseChatEnum::InvalidOption;

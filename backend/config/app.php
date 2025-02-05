@@ -22,5 +22,8 @@ return [
         'driver' => env('APP_MAINTENANCE_DRIVER', 'file'),
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
-
+    'mfp' => [
+        'url' => env('MFP_URL'),
+        'token' => env('MFP_TOKEN'),
+    ]
 ];
