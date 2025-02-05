@@ -26,6 +26,7 @@ readonly class FinancesInHandsQuestionProcessUseCase
             ResponseChat::editMessage($chatId, $callbackQuery['message']['message_id'], $newText);
 
             if ($callbackData === 'yes') {
+                ResponseChat::interactWithUser($chatId, "Buscando Carteiras...");
                 $this->financesInHandsWalletList->execute($chatId, $cacheKey);
                 return ResponseChatEnum::Ok;
             } elseif ($callbackData === 'no') {

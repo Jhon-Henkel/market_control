@@ -18,8 +18,8 @@ readonly class FinancesInHandsWalletListUseCase
         foreach ($wallets as $wallet) {
             $ids[] = $wallet['id'];
         }
-        cache($cacheKey, 'finances_in_hands_wallet_list');
-        cache($cacheKey . '_wallets', json_encode($ids));
+        cache([$cacheKey => 'finances_in_hands_wallet_list'], now()->addMinutes(5));
+        cache([$cacheKey . '_wallets' => json_encode($ids)], now()->addMinutes(5));
         ResponseChat::interactWithUser($chatId, $this->makeWalletList($wallets));
     }
 
@@ -32,7 +32,7 @@ readonly class FinancesInHandsWalletListUseCase
         foreach ($wallets as $wallet) {
             $walletList .= "{$wallet['id']} - Nome: {$wallet['name']}\n";
         }
-        $walletList .= "\n\nDigite o número da carteira que deseja usar.";
+        $walletList .= "\nDigite o número da carteira que deseja usar.";
         return $walletList;
     }
 }

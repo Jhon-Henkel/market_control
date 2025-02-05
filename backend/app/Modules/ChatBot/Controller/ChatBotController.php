@@ -73,7 +73,9 @@ readonly class ChatBotController
         } elseif ($step === 'waiting_nfce') {
             $status = $this->stepWaitingNfce($data, $chatId, $cacheKey, $message);
             return ResponseChat::responseChat($status, $chatId);
-        } elseif ($step === 'finances_in_hands_wallet_list') {
+        }
+
+        if ($step === 'finances_in_hands_wallet_list') {
             // apos testar, mover para um use case
             Log::info('Finanças na mão - Carteira Selecionada');
             $message = (int)$message;
@@ -85,6 +87,8 @@ readonly class ChatBotController
             }
 
             Log::info('Carteira selecionada: ' . $message);
+
+            ResponseChat::interactWithUser($chatId, 'Carteira selecionada: ' . $message);
 
             return ResponseChat::responseChat(ResponseChatEnum::Ok);
         }
