@@ -99,14 +99,10 @@ readonly class ChatBotController
     {
         $status = $this->nfceProcessUseCase->execute($data, $chatId, $cacheKey, $message);
 
-        // linha abaixo (86 e 87) somente para teste - apagar depois
-        $this->financesInHandsQuestionUseCase->execute($chatId, $cacheKey);
-        return ResponseChatEnum::Ok;
-
         if ($status === ResponseChatEnum::InvalidUrl) {
             $this->nfceStartUseCase->execute($chatId, $cacheKey);
             return ResponseChatEnum::Ok;
-        } elseif ($status === ResponseChatEnum::Ok) {
+        } elseif ($status === ResponseChatEnum::Ok || $status == ResponseChatEnum::NfceAlreadyProcessed) {
             $this->financesInHandsQuestionUseCase->execute($chatId, $cacheKey);
             return ResponseChatEnum::Ok;
         }

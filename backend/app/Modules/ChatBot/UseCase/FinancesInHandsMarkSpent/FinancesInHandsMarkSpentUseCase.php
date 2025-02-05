@@ -6,6 +6,7 @@ use App\Models\Purchase;
 use App\Modules\_Shared\Response\ResponseChat;
 use App\Modules\ChatBot\Enum\ResponseChatEnum;
 use App\Modules\FinancesInHands\UseCase\MarkMarketMovement\FinancesInHandsMarkMarketMovementUseCase;
+use DateTime;
 use Illuminate\Support\Facades\Log;
 
 readonly class FinancesInHandsMarkSpentUseCase
@@ -25,9 +26,11 @@ readonly class FinancesInHandsMarkSpentUseCase
             return ResponseChatEnum::MfpErrorToRegisterPurchase;
         }
 
+        $date = new DateTime($purchase->purchase_date);
+
         $message = "Movimentação de mercado registrada com sucesso! 🎉🎉\n\n";
         $message .= "📄 Resumo da compra: \n\n";
-        $message .= "📅 Data da compra: " . $purchase->purchase_date . "\n";
+        $message .= "📅 Data da compra: " . $date->format('d/m/Y') . "\n";
         $message .= "🛒 Número de itens: " . $purchase->total_items . "\n";
         $message .= "💸 Carteira: " . $this->getWalletName($cacheKey, $walletId) . "\n";
         $message .= "💵 Valor do subtotal: R$ " . number_format($purchase->subtotal_value, 2, ',', '.') . "\n";
