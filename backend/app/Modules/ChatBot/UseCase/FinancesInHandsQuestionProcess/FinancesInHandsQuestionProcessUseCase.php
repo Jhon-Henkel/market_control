@@ -20,21 +20,21 @@ readonly class FinancesInHandsQuestionProcessUseCase
             $callbackData = $callbackQuery['data'];
             ResponseChat::answerCallbackQuery($data['callback_query']['id']);
 
-            $newText = ($callbackData === 'yes') ? "Você escolheu: Sim!" : "Você escolheu: Não!";
+            $newText = ($callbackData === 'yes') ? "✅ Você escolheu: Sim!" : "🚫 Você escolheu: Não!";
             Log::info($newText);
 
             ResponseChat::editMessage($chatId, $callbackQuery['message']['message_id'], $newText);
 
             if ($callbackData === 'yes') {
-                ResponseChat::interactWithUser($chatId, "Buscando Carteiras...");
+                ResponseChat::interactWithUser($chatId, "🔍 Buscando Carteiras...");
                 $this->financesInHandsWalletList->execute($chatId, $cacheKey);
                 return ResponseChatEnum::Ok;
             } elseif ($callbackData === 'no') {
-                ResponseChat::interactWithUser($chatId, "Operação cancelada.");
+                ResponseChat::interactWithUser($chatId, "⛔ Operação cancelada.");
                 return ResponseChatEnum::CancelOption;
             }
         }
-        ResponseChat::interactWithUser($chatId, "Comando inválido. Digite /start para iniciar uma nova conversa.");
+        ResponseChat::interactWithUser($chatId, "🚫 Comando inválido. Digite /start para iniciar uma nova conversa.");
         return ResponseChatEnum::InvalidOption;
     }
 }

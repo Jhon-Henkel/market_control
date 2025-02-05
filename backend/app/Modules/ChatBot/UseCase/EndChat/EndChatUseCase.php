@@ -10,7 +10,7 @@ class EndChatUseCase
     public function execute(string $chatId, string $cacheKey): void
     {
         Log::info('Conversa finalizada');
-        ResponseChat::interactWithUser($chatId, "Até mais!");
+        ResponseChat::interactWithUser($chatId, "👋 Até mais!");
         cache()->forget($cacheKey);
     }
 }

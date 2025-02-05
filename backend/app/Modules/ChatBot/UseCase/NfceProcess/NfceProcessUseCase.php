@@ -38,16 +38,16 @@ class NfceProcessUseCase
             $url = $this->processQRCode($imagePath);
 
             if ($url && filter_var($url, FILTER_VALIDATE_URL)) {
-                ResponseChat::interactWithUser($chatId, "QR Code da NFC-e lido: " . $url);
+                ResponseChat::interactWithUser($chatId, "😎 QR Code da NFC-e lido: " . $url);
             } else {
                 Log::error('QR Code inválido');
-                ResponseChat::interactWithUser($chatId, "O QR Code não contém uma URL válida de NFC-e.");
+                ResponseChat::interactWithUser($chatId, "🚫 O QR Code não contém uma URL válida de NFC-e.");
                 cache()->forget($cacheKey);
                 return ResponseChatEnum::InvalidUrl;
             }
         } elseif (!filter_var($url, FILTER_VALIDATE_URL)) {
             Log::error('Link nfce inválido');
-            ResponseChat::interactWithUser($chatId, "O link enviado não parece ser válido. Por favor, envie um link correto.");
+            ResponseChat::interactWithUser($chatId, "🚫 O link enviado não parece ser válido. Por favor, envie um link correto.");
             cache()->forget($cacheKey);
             return ResponseChatEnum::InvalidUrl;
         }
@@ -56,16 +56,16 @@ class NfceProcessUseCase
 
         if ($result['status'] === 'already_processed') {
             Log::info('Nfce já processada anteriormente!');
-            ResponseChat::interactWithUser($chatId, "Essa NFC-e já foi processada anteriormente.");
+            ResponseChat::interactWithUser($chatId, "🚫 Essa NFC-e já foi processada anteriormente.");
             return ResponseChatEnum::NfceAlreadyProcessed;
         } elseif ($result['status'] === 'error') {
             Log::error('Erro ao processar nfce');
-            ResponseChat::interactWithUser($chatId, "Ocorreu um erro ao processar a NFC-e. Por favor, tente novamente.");
+            ResponseChat::interactWithUser($chatId, "🚫 Ocorreu um erro ao processar a NFC-e. Por favor, tente novamente.");
             return ResponseChatEnum::ErrorToProcessNfce;
         }
 
         Log::info('NFC-e processada com sucesso');
-        ResponseChat::interactWithUser($chatId, "NFC-e processada com sucesso!");
+        ResponseChat::interactWithUser($chatId, "✅ NFC-e processada com sucesso!");
         cache()->forget($cacheKey);
         return ResponseChatEnum::Ok;
     }

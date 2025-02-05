@@ -18,7 +18,7 @@ readonly class FinancesInHandsWalletSelectUseCase
         Log::info('Finanças na mão - Carteira Selecionada');
         $message = (int)$message;
         $wallets = json_decode(cache($cacheKey . '_wallets'), true);
-        if (! $this->isValidChoice($message, $wallets, $chatId, $cacheKey)) {
+        if (! $this->isValidChoice($message, $wallets, $chatId)) {
             $this->financesInHandsWalletList->execute($chatId, $cacheKey);
             return ResponseChatEnum::Ok;
         }
@@ -27,11 +27,11 @@ readonly class FinancesInHandsWalletSelectUseCase
         return ResponseChatEnum::MfpWalletSelected;
     }
 
-    protected function isValidChoice(int $choice, array $wallets, string $chatId, string $cacheKey): bool
+    protected function isValidChoice(int $choice, array $wallets, string $chatId): bool
     {
         $ids = array_map(function ($wallet) { return $wallet['id']; }, $wallets);
         if (! in_array($choice, $ids)) {
-            ResponseChat::interactWithUser($chatId, "⚠️⚠️ Carteira inválida.\n\nDigite o número da carteira que deseja usar.");
+            ResponseChat::interactWithUser($chatId, "⚠️⚠️ Carteira inválida.\n\nSerá que selecionou a correta?.");
             return false;
         }
         return true;

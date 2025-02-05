@@ -27,12 +27,12 @@ readonly class FinancesInHandsMarkSpentUseCase
 
         $message = "Movimentação de mercado registrada com sucesso! 🎉🎉\n\n";
         $message .= "📄 Resumo da compra: \n\n";
-        $message .= "Data da compra: " . $purchase->purchase_date . "\n";
-        $message .= "Número de itens: " . $purchase->total_items . "\n";
-        $message .= "Carteira: " . $this->getWalletName($cacheKey, $walletId) . "\n";
-        $message .= "Valor do subtotal: R$ " . number_format($purchase->subtotal_value, 2, ',', '.') . "\n";
-        $message .= "Valor do desconto: R$ " . number_format($purchase->discount_value, 2, ',', '.') . "\n";
-        $message .= "Valor total: R$ " . number_format($purchase->total_value, 2, ',', '.') . "\n";
+        $message .= "📅 Data da compra: " . $purchase->purchase_date . "\n";
+        $message .= "🛒 Número de itens: " . $purchase->total_items . "\n";
+        $message .= "💸 Carteira: " . $this->getWalletName($cacheKey, $walletId) . "\n";
+        $message .= "💵 Valor do subtotal: R$ " . number_format($purchase->subtotal_value, 2, ',', '.') . "\n";
+        $message .= "📊 Valor do desconto: R$ " . number_format($purchase->discount_value, 2, ',', '.') . "\n";
+        $message .= "💰 Valor total: R$ " . number_format($purchase->total_value, 2, ',', '.') . "\n";
 
         cache()->forget($cacheKey);
         cache()->forget($cacheKey . '_wallets');

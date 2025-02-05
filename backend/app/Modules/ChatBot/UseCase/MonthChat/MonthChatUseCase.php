@@ -17,7 +17,7 @@ readonly class MonthChatUseCase
         Log::info('/month');
         $purchases = $this->getThisMonthPurchasesUseCase->execute();
         ResponseChat::interactWithUser($chatId, $this->formatToUser($purchases));
-        ResponseChat::interactWithUser($chatId, "Chat Finalizado!");
+        ResponseChat::interactWithUser($chatId, "✅ Chat Finalizado!");
     }
 
     protected function formatToUser(array $purchases): string
@@ -46,7 +46,7 @@ readonly class MonthChatUseCase
             $message .= "🔹 $name\n          $quantity $unit - R$ $value";
             $message .= "          ━━━━━━━━━━━━━━━━━\n";
         }
-        $message .= "Fim da Lista!\n";
+        $message .= "😅 Ufa, a lista acabou!\n";
 
         return $message;
     }

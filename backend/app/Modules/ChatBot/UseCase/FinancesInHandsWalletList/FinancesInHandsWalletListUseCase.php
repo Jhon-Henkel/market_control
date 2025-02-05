@@ -22,13 +22,13 @@ readonly class FinancesInHandsWalletListUseCase
     protected function makeWalletList(array $wallets): string
     {
         if (empty($wallets)) {
-            return "Nenhuma carteira encontrada 😞";
+            return "😞 Poxa, não encontrei nenhuma carteira 😞";
         }
         $walletList = "💰 Carteiras disponíveis:\n\n";
         foreach ($wallets as $wallet) {
             $walletList .= "{$wallet['id']} - {$wallet['name']}\n";
         }
-        $walletList .= "\nDigite o número da carteira que deseja usar.";
+        $walletList .= "\nAgora me fala, qual o número da carteira que quer usar?.";
         return $walletList;
     }
 }

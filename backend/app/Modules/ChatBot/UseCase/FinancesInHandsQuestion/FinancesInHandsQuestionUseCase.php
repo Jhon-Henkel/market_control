@@ -11,7 +11,7 @@ class FinancesInHandsQuestionUseCase
     {
         Log::info('Marcar no Finanças na mão?');
         cache([$cacheKey => 'finances_in_hands_question'], now()->addMinutes(5));
-        $message = "Marcar uma saída do tipo mercado no Finanças na mão?";
+        $message = "❓ Marcar uma saída do tipo mercado no Finanças na mão?";
         ResponseChat::interactWithUser($chatId, $message, true);
     }
 }
