@@ -30,7 +30,6 @@ readonly class FinancesInHandsQuestionProcessUseCase
                 $this->financesInHandsWalletList->execute($chatId, $cacheKey);
                 return ResponseChatEnum::Ok;
             } elseif ($callbackData === 'no') {
-                ResponseChat::interactWithUser($chatId, "⛔ Operação cancelada.");
                 return ResponseChatEnum::CancelOption;
             }
         }

@@ -8,8 +8,8 @@ use App\Modules\ChatBot\UseCase\EndChat\EndChatUseCase;
 use App\Modules\ChatBot\UseCase\FinancesInHandsMarkSpent\FinancesInHandsMarkSpentUseCase;
 use App\Modules\ChatBot\UseCase\FinancesInHandsQuestion\FinancesInHandsQuestionUseCase;
 use App\Modules\ChatBot\UseCase\FinancesInHandsQuestionProcess\FinancesInHandsQuestionProcessUseCase;
-use App\Modules\ChatBot\UseCase\FinancesInHandsWalletList\FinancesInHandsWalletListUseCase;
 use App\Modules\ChatBot\UseCase\FinancesInHandsWalletSelect\FinancesInHandsWalletSelectUseCase;
+use App\Modules\ChatBot\UseCase\LastPurchaseChat\LastPurchaseChatUseCase;
 use App\Modules\ChatBot\UseCase\MonthChat\MonthChatUseCase;
 use App\Modules\ChatBot\UseCase\NfceProcess\NfceProcessUseCase;
 use App\Modules\ChatBot\UseCase\NfceStart\NfceStartUseCase;
@@ -30,6 +30,7 @@ readonly class ChatBotController
         private FinancesInHandsQuestionProcessUseCase $financesInHandsQuestionProcessUseCase,
         private FinancesInHandsWalletSelectUseCase $financesInHandsWalletSelectUseCase,
         private FinancesInHandsMarkSpentUseCase $financesInHandsMarkSpentUseCase,
+        private LastPurchaseChatUseCase $lastPurchaseChatUseCase
     ) {
     }
 
@@ -76,6 +77,11 @@ readonly class ChatBotController
         } elseif ($step === 'waiting_nfce') {
             $status = $this->stepWaitingNfce($data, $chatId, $cacheKey, $message);
             return ResponseChat::responseChat($status, $chatId);
+        }
+
+        if ($message === '/last-purchases') {
+            $this->lastPurchaseChatUseCase->execute($chatId);
+            return ResponseChat::responseChat(ResponseChatEnum::FinishChat);
         }
 
         if ($step === 'finances_in_hands_wallet_list') {
