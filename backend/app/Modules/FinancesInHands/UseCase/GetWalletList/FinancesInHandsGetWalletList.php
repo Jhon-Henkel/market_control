@@ -11,7 +11,7 @@ class FinancesInHandsGetWalletList
     {
         Log::info('Solicitando lista de carteiras');
         $headers = ['MFP-TOKEN' => config('app.mfp.token')];
-        $response = Http::withHeaders($headers)->get(config('app.mfp.url') . 'wallets');
+        $response = Http::withHeaders($headers)->get(config('app.mfp.url') . 'market-control-app/wallets');
         Log::info("Status Code: {$response->status()} - Body: {$response->body()}");
         $response = $response->json();
         if (empty($response)) {
