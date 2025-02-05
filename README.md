@@ -23,6 +23,7 @@ NFCe e o sistema irá buscar os dados e salvar no banco de dados para posteriore
       chown www-data:www-data -R storage/logs/
       cp .env.example .env
       php artisan key:generate
+      php artisan migrate
     ```
 - Popular as variáveis de ambiente do arquivo `.env`.
   - Caso tenha mais de um username permitido a acessar o app via telegram, adicione os usernames (sem o @ na frente) separados por vírgula na variável `APP_TELEGRAM_ALLOWED_USERNAMES`.
@@ -33,10 +34,28 @@ NFCe e o sistema irá buscar os dados e salvar no banco de dados para posteriore
 
 ## Comandos para interagir com o bot
 - `/start` - Inicia uma nova conversa com o chatbot
-- `/nfce` - Inicia o processo de salvar uma NFCe no banco de dados
+- `/nfce` - Inicia o processo de salvar uma NFCe no banco de dados, aqui temos a possibilidade de processar tanto um link quanto um QR-Code. No final, perguntamos se deseja salvar uma movimentação de despesa no Finanças na Mão.
 - `/month` - Relatório do mês atual
 - `/purchase` - Relatório para ver uma das compras feitas - Em desenvolvimento
 - `/end` - Finaliza a conversa com o chatbot
 
 ## Acessos 
 - [PHP My Admin](http://localhost:8080) > Usuário `root` Senha `123`
+
+## Integração com o Finanças na Mão
+- Popular as variáveis no .env
+  - `MFP_URL` - URL do Finanças na Mão
+  - `MFP_TOKEN` - Token de autenticação MFP do Finanças na Mão
+- No .env do Finanças na mão, popular as variáveis
+  - `MARKET_CONTROL_HASH` - Hash do usuário do Market Control no Finanças na Mão
+
+Obs.: Se ambas estiverem em container Docker, o container `mfp_app` e `mfp_db` devem estar na mesma network que o container do Market Control.
+Para colocar na mesma network, basta usar os comandos:
+```bash
+  docker network ls
+  docker network connect nome-da-rede nome-do-container
+```
+Para checar se está tudo certo, pode usar:
+```bash
+  docker network inspect nome-da-rede-market-control
+```
