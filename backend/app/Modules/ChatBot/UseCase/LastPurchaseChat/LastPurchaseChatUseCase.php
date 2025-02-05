@@ -6,6 +6,7 @@ use App\Modules\_Shared\Response\ResponseChat;
 use App\Modules\Purchase\UseCase\GetLastPurchase\GetLastPurchaseUseCase;
 use DateTime;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 readonly class LastPurchaseChatUseCase
 {
@@ -52,7 +53,7 @@ readonly class LastPurchaseChatUseCase
             if (strlen($name) === 30) {
                 $name .= "...";
             }
-            $name = str_replace(' ', "\u{00A0}", $name);
+            $name = str_replace(' ', "\u{00A0}", Str::title(Str::lower($name)));
             $value = number_format($produto['total_price'], 2, ',', '.');
 
             $return .= "🔹 $name\n          $produto[quantity] $produto[unit] - R$ $value";

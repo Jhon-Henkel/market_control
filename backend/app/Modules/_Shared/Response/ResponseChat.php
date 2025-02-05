@@ -16,7 +16,7 @@ class ResponseChat
     public static function responseChat(ResponseChatEnum $status, int|string|null $chatId = null): JsonResponse
     {
         if ($status !== ResponseChatEnum::Ok && ! is_null($chatId)) {
-            self::interactWithUser($chatId, "Chat Finalizado!");
+            self::interactWithUser($chatId, "✅ Chat Finalizado!");
         }
         return response()->json(['status' => $status->value]);
     }

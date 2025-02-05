@@ -16,15 +16,17 @@ readonly class MonthChatUseCase
     {
         Log::info('/month');
         $purchases = $this->getThisMonthPurchasesUseCase->execute();
-        ResponseChat::interactWithUser($chatId, $this->formatToUser($purchases));
+        $this->showToUser($chatId, $purchases);
         ResponseChat::interactWithUser($chatId, "✅ Chat Finalizado!");
     }
 
-    protected function formatToUser(array $purchases): string
+    protected function showToUser(string $chatId, array $lastPurchase): void
     {
         if (empty($purchases)) {
-            return "Nenhuma compra realizada este mês.";
+            ResponseChat::interactWithUser($chatId, "Nenhuma compra realizada este mês.");
+            return;
         }
+
         $totalAmount = number_format($purchases['total_amount'], 2, ',', '.');
 
         $message = "📊 Resumo das Compras Deste Mês\n\n";
@@ -33,7 +35,20 @@ readonly class MonthChatUseCase
         $message .= "━━━━━━━━━━━━━━━━━\n\n";
         $message .= "📝 Lista de Compras:\n\n";
 
-        foreach ($purchases['products'] as $produto) {
+        ResponseChat::interactWithUser($chatId, $message);
+
+        $productsPack = array_chunk($lastPurchase['products'], 30);
+        foreach ($productsPack as $products) {
+            ResponseChat::interactWithUser($chatId, $this->formatProducts($products));
+        }
+
+        ResponseChat::interactWithUser($chatId, "😅 Ufa, a lista acabou!\n");
+    }
+
+    protected function formatProducts(array $products): string
+    {
+        $message = '';
+        foreach ($products as $produto) {
             $quantity = $produto['quantity'];
             $unit = $produto['unit'];
             $name = substr($produto['name'], 0, 30);
