@@ -36,16 +36,17 @@ readonly class LastPurchaseChatUseCase
 
         ResponseChat::interactWithUser($chatId, $message);
 
-        $products = array_chunk($lastPurchase['products'], 30);
-
-        foreach ($products as $product) {
-            ResponseChat::interactWithUser($chatId, $this->formatProducts($product));
+        $productsPack = array_chunk($lastPurchase['products'], 30);
+        foreach ($productsPack as $products) {
+            ResponseChat::interactWithUser($chatId, $this->formatProducts($products));
         }
+
+        ResponseChat::interactWithUser($chatId, "😅 Ufa, a lista acabou!\n");
     }
 
     protected function formatProducts(array $products): string
     {
-        $message = '';
+        $return = '';
         foreach ($products as $product) {
             $name = substr($product->name, 0, 30);
             if (strlen($name) === 30) {
@@ -54,11 +55,10 @@ readonly class LastPurchaseChatUseCase
             $name = str_replace(' ', "\u{00A0}", $name);
             $value = number_format($product->total_value, 2, ',', '.');
 
-            $message .= "🔹 $name\n          $product->quantity $product->unit - R$ $value";
-            $message .= "          ━━━━━━━━━━━━━━━━━\n";
+            $return .= "🔹 $name\n          $product->quantity $product->unit - R$ $value";
+            $return .= "          ━━━━━━━━━━━━━━━━━\n";
         }
-        $message .= "😅 Ufa, a lista acabou!\n";
 
-        return $message;
+        return $return;
     }
 }

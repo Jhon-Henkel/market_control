@@ -27,7 +27,7 @@ readonly class MonthChatUseCase
         }
         $totalAmount = number_format($purchases['total_amount'], 2, ',', '.');
 
-        $message = "📊 Resumo das Compras do Mês\n";
+        $message = "📊 Resumo das Compras Deste Mês\n\n";
         $message .= "🛒 Total de Itens: $purchases[total_products]\n";
         $message .= "💰 Valor Total: R$ $totalAmount\n";
         $message .= "━━━━━━━━━━━━━━━━━\n\n";
