@@ -35,14 +35,14 @@ readonly class LastPurchaseChatUseCase
         $message .= "📝 Produtos da Compras:\n\n";
 
         foreach ($lastPurchase['products'] as $produto) {
-            $name = substr($produto['name'], 0, 30);
+            $name = substr($produto->name, 0, 30);
             if (strlen($name) === 30) {
                 $name .= "...";
             }
             $name = str_replace(' ', "\u{00A0}", $name);
-            $value = number_format($produto['total_value'], 2, ',', '.');
+            $value = number_format($produto->total_value, 2, ',', '.');
 
-            $message .= "🔹 $name\n          $produto[quantity] $produto[unit] - R$ $value";
+            $message .= "🔹 $name\n          $produto->quantity $produto->unit - R$ $value";
             $message .= "          ━━━━━━━━━━━━━━━━━\n";
         }
         $message .= "😅 Ufa, a lista acabou!\n";
