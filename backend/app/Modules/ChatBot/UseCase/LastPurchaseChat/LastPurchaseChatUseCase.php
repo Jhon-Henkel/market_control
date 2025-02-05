@@ -34,6 +34,7 @@ readonly class LastPurchaseChatUseCase
         $message .= "━━━━━━━━━━━━━━━━━\n\n";
         $message .= "📝 Produtos da Compras:\n\n";
 
+        return $message;
         foreach ($lastPurchase['products'] as $produto) {
             $name = substr($produto->name, 0, 30);
             if (strlen($name) === 30) {
