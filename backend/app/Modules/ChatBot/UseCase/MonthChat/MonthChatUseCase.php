@@ -20,7 +20,7 @@ readonly class MonthChatUseCase
         ResponseChat::interactWithUser($chatId, "✅ Chat Finalizado!");
     }
 
-    protected function showToUser(string $chatId, array $lastPurchase): void
+    protected function showToUser(string $chatId, array $purchases): void
     {
         if (empty($purchases)) {
             ResponseChat::interactWithUser($chatId, "Nenhuma compra realizada este mês.");
@@ -37,7 +37,7 @@ readonly class MonthChatUseCase
 
         ResponseChat::interactWithUser($chatId, $message);
 
-        $productsPack = array_chunk($lastPurchase['products'], 30);
+        $productsPack = array_chunk($purchases['products'], 30);
         foreach ($productsPack as $products) {
             ResponseChat::interactWithUser($chatId, $this->formatProducts($products));
         }
