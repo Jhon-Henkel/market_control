@@ -3,6 +3,7 @@
 namespace App\Modules\Purchase\UseCase\GetLastPurchase;
 
 use App\Models\Purchase;
+use Illuminate\Support\Facades\Log;
 
 class GetLastPurchaseUseCase
 {
