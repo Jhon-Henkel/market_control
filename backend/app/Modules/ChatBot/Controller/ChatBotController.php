@@ -81,7 +81,7 @@ readonly class ChatBotController
 
         if ($message === '/last-purchases') {
             $this->lastPurchaseChatUseCase->execute($chatId);
-            return ResponseChat::responseChat(ResponseChatEnum::FinishChat);
+            return ResponseChat::responseChat(ResponseChatEnum::FinishChat, $chatId);
         }
 
         if ($step === 'finances_in_hands_wallet_list') {
