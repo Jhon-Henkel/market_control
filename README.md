@@ -36,7 +36,7 @@ NFCe e o sistema irá buscar os dados e salvar no banco de dados para posteriore
 - `/start` - Inicia uma nova conversa com o chatbot
 - `/nfce` - Inicia o processo de salvar uma NFCe no banco de dados, aqui temos a possibilidade de processar tanto um link quanto um QR-Code. No final, perguntamos se deseja salvar uma movimentação de despesa no Finanças na Mão.
 - `/month` - Relatório do mês atual
-- `/lastpurchase` - Relatório da última compra
+- `/last_purchase` - Relatório da última compra
 - `/end` - Finaliza a conversa com o chatbot
 
 ## Acessos 

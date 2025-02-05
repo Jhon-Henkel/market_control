@@ -79,7 +79,7 @@ readonly class ChatBotController
             return ResponseChat::responseChat($status, $chatId);
         }
 
-        if ($message === '/lastpurchase') {
+        if ($message === '/last_purchase') {
             $this->lastPurchaseChatUseCase->execute($chatId);
             return ResponseChat::responseChat(ResponseChatEnum::FinishChat, $chatId);
         }

@@ -17,7 +17,7 @@ readonly class LastPurchaseChatUseCase
     {
         Log::info('Buscando últimas compras...');
         $lastPurchase = $this->getLastPurchaseUseCase->execute();
-        if (empty($lastPurchase)) {
+        if (empty($lastPurchase['purchase'])) {
             ResponseChat::interactWithUser($chatId, '😞 Poxa, não encontrei nenhuma compra 😞');
         }
         ResponseChat::interactWithUser($chatId, $this->formatToUser($lastPurchase));
