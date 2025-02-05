@@ -61,7 +61,6 @@ readonly class MonthChatUseCase
             $message .= "🔹 $name\n          $quantity $unit - R$ $value";
             $message .= "          ━━━━━━━━━━━━━━━━━\n";
         }
-        $message .= "😅 Ufa, a lista acabou!\n";
 
         return $message;
     }
