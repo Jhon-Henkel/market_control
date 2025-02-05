@@ -5,6 +5,7 @@ namespace App\Modules\ChatBot\UseCase\LastPurchaseChat;
 use App\Modules\_Shared\Response\ResponseChat;
 use App\Modules\Purchase\UseCase\GetLastPurchase\GetLastPurchaseUseCase;
 use DateTime;
+use Illuminate\Support\Facades\Log;
 
 readonly class LastPurchaseChatUseCase
 {
@@ -14,6 +15,7 @@ readonly class LastPurchaseChatUseCase
 
     public function execute(string $chatId): void
     {
+        Log::info('Buscando últimas compras...');
         $lastPurchase = $this->getLastPurchaseUseCase->execute();
         if (empty($lastPurchase)) {
             ResponseChat::interactWithUser($chatId, '😞 Poxa, não encontrei nenhuma compra 😞');

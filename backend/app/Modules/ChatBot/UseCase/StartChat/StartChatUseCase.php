@@ -22,7 +22,7 @@ class StartChatUseCase
 /start -> Iniciar uma nova conversa
 /nfce -> Processar NFC-e
 /month -> Relatório do mês atual
-/last_purchase -> Relatório da última compra
+/lastpurchase -> Relatório da última compra
 /end -> Finalizar conversa\n\n";
     }
 }
