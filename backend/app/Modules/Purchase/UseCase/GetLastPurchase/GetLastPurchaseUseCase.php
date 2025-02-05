@@ -9,7 +9,7 @@ class GetLastPurchaseUseCase
     public function execute(): array
     {
         $purchase = Purchase::orderBy('id', 'desc')->first();
-
+        Log::info('Última compra encontrada: ' . json_encode($purchase));
         return [
             'purchase' => $purchase,
             'products' => $purchase->products
