@@ -19,8 +19,8 @@ class StartChatUseCase
     public function execute(string $chatId, string $cacheKey): void
     {
         Log::info('/start');
-        $message = "👋🏼👋🏼 Olá, bem-vindo ao Chatbot do Market Control.\n\nDigite / para ver as opções\n \n";
-        $endMessage = "⚠️⚠️Importante⚠️⚠️ \n\nO chat será finalizado após 5 minutos de inatividade.";
+        $message = "👋🏼👋🏼 Olá, bem-vindo ao Chatbot do Market Control.\n\nDigite / para ver as opções.\n \n";
+        $endMessage = "⚠️⚠️Importante⚠️⚠️\nO chat será finalizado após 5 minutos de inatividade.";
         ResponseChat::interactWithUser($chatId, $message . $endMessage);
         cache()->forget($cacheKey);
     }

@@ -20,10 +20,10 @@ readonly class LastPurchaseChatUseCase
         if (empty($lastPurchase['purchase'])) {
             ResponseChat::interactWithUser($chatId, '😞 Poxa, não encontrei nenhuma compra 😞');
         }
-        ResponseChat::interactWithUser($chatId, $this->formatToUser($lastPurchase));
+        $this->showToUser($chatId, $lastPurchase);
     }
 
-    protected function formatToUser(array $lastPurchase): string
+    protected function showToUser(string $chatId, array $lastPurchase): void
     {
         $message = "📄 Resumo da última compra: \n\n";
         $message .= "📅 Data da compra: " . new DateTime($lastPurchase['purchase']->purchase_date)->format('d/m/Y') . "\n";
@@ -34,7 +34,20 @@ readonly class LastPurchaseChatUseCase
         $message .= "━━━━━━━━━━━━━━━━━\n\n";
         $message .= "📝 Produtos da Compras:\n\n";
 
-        foreach ($lastPurchase['products'] as $produto) {
+        ResponseChat::interactWithUser($chatId, $message);
+
+        $productsPack = array_chunk($lastPurchase['products'], 30);
+        foreach ($productsPack as $products) {
+            ResponseChat::interactWithUser($chatId, $this->formatProducts($products));
+        }
+
+        ResponseChat::interactWithUser($chatId, "😅 Ufa, a lista acabou!\n");
+    }
+
+    protected function formatProducts(array $products): string
+    {
+        $return = '';
+        foreach ($products as $produto) {
             $name = substr($produto['name'], 0, 30);
             if (strlen($name) === 30) {
                 $name .= "...";
@@ -42,11 +55,9 @@ readonly class LastPurchaseChatUseCase
             $name = str_replace(' ', "\u{00A0}", $name);
             $value = number_format($produto['total_price'], 2, ',', '.');
 
-            $message .= "🔹 $name\n          $produto[quantity] $produto[unit] - R$ $value";
-            $message .= "          ━━━━━━━━━━━━━━━━━\n";
+            $return .= "🔹 $name\n          $produto[quantity] $produto[unit] - R$ $value";
+            $return .= "          ━━━━━━━━━━━━━━━━━\n";
         }
-        $message .= "😅 Ufa, a lista acabou!\n";
-
-        return $message;
+        return $return;
     }
 }

@@ -97,7 +97,7 @@ readonly class ChatBotController
             return ResponseChat::responseChat(ResponseChatEnum::Ok);
         }
 
-        ResponseChat::interactWithUser($chatId, "🚫 Comando inválido. Digite /start para iniciar uma nova conversa.");
+        ResponseChat::interactWithUser($chatId, "🚫 Comando inválido. Digite / para ver as opções.");
         return ResponseChat::responseChat(ResponseChatEnum::Ok);
     }
 
