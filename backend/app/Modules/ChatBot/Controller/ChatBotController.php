@@ -5,9 +5,11 @@ namespace App\Modules\ChatBot\Controller;
 use App\Modules\_Shared\Response\ResponseChat;
 use App\Modules\ChatBot\Enum\ResponseChatEnum;
 use App\Modules\ChatBot\UseCase\EndChat\EndChatUseCase;
+use App\Modules\ChatBot\UseCase\FinancesInHandsMarkSpent\FinancesInHandsMarkSpentUseCase;
 use App\Modules\ChatBot\UseCase\FinancesInHandsQuestion\FinancesInHandsQuestionUseCase;
 use App\Modules\ChatBot\UseCase\FinancesInHandsQuestionProcess\FinancesInHandsQuestionProcessUseCase;
 use App\Modules\ChatBot\UseCase\FinancesInHandsWalletList\FinancesInHandsWalletListUseCase;
+use App\Modules\ChatBot\UseCase\FinancesInHandsWalletSelect\FinancesInHandsWalletSelectUseCase;
 use App\Modules\ChatBot\UseCase\MonthChat\MonthChatUseCase;
 use App\Modules\ChatBot\UseCase\NfceProcess\NfceProcessUseCase;
 use App\Modules\ChatBot\UseCase\NfceStart\NfceStartUseCase;
@@ -26,7 +28,8 @@ readonly class ChatBotController
         private MonthChatUseCase $monthChatUseCase,
         private FinancesInHandsQuestionUseCase $financesInHandsQuestionUseCase,
         private FinancesInHandsQuestionProcessUseCase $financesInHandsQuestionProcessUseCase,
-        private FinancesInHandsWalletListUseCase $financesInHandsWalletList
+        private FinancesInHandsWalletSelectUseCase $financesInHandsWalletSelectUseCase,
+        private FinancesInHandsMarkSpentUseCase $financesInHandsMarkSpentUseCase,
     ) {
     }
 
@@ -76,21 +79,11 @@ readonly class ChatBotController
         }
 
         if ($step === 'finances_in_hands_wallet_list') {
-            // apos testar, mover para um use case
-            Log::info('Finanças na mão - Carteira Selecionada');
-            $message = (int)$message;
-            $ids = json_decode(cache($cacheKey . '_wallets'), true);
-            if (! in_array($message, $ids)) {
-                ResponseChat::interactWithUser($chatId, "Carteira inválida. Digite o número da carteira que deseja usar.");
-                $this->financesInHandsWalletList->execute($chatId, $cacheKey);
-                return ResponseChat::responseChat(ResponseChatEnum::Ok);
+            $status = $this->financesInHandsWalletSelectUseCase->execute($chatId, $cacheKey, $message);
+            if ($status === ResponseChatEnum::MfpWalletSelected) {
+                $status =  $this->financesInHandsMarkSpentUseCase->execute($chatId, $cacheKey, (int)$message);
             }
-
-            Log::info('Carteira selecionada: ' . $message);
-
-            ResponseChat::interactWithUser($chatId, 'Carteira selecionada: ' . $message);
-
-            return ResponseChat::responseChat(ResponseChatEnum::Ok);
+            return ResponseChat::responseChat($status, $chatId);
         }
 
         if ($message === '/month') {

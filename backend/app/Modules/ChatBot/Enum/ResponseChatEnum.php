@@ -12,4 +12,7 @@ enum ResponseChatEnum: string
     case InvalidUrl = 'invalid url';
     case ErrorToProcessNfce = 'error to process nfce';
     case NfceAlreadyProcessed = 'nfce already processed';
+    case MfpWalletSelected = 'mfp wallet selected';
+    case MfpErrorToRegisterPurchase = 'mfp error to register purchase';
+    case FinishChat = 'finish chat';
 }

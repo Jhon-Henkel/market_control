@@ -13,12 +13,8 @@ class FinancesInHandsGetWalletList
         $headers = ['MFP-TOKEN' => config('app.mfp.token')];
         $response = Http::withHeaders($headers)->get(config('app.mfp.url') . 'market-control-app/wallets');
         Log::info("Status Code: {$response->status()}");
-        $response = $response->json();
-        if (empty($response)) {
-            return [];
-        }
         $result = [];
-        foreach ($response as $wallet) {
+        foreach ($response->json() as $wallet) {
             $result[] = [
                 'id' => $wallet['id'],
                 'name' => $wallet['name'],
