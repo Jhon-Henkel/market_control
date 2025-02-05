@@ -12,7 +12,7 @@ readonly class LastPurchaseChatUseCase
     {
     }
 
-    public function execute(int $chatId): void
+    public function execute(string $chatId): void
     {
         $lastPurchase = $this->getLastPurchaseUseCase->execute();
         if (empty($lastPurchase)) {
