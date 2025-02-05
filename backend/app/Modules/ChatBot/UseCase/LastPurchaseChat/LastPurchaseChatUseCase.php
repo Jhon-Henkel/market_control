@@ -20,45 +20,33 @@ readonly class LastPurchaseChatUseCase
         if (empty($lastPurchase['purchase'])) {
             ResponseChat::interactWithUser($chatId, '😞 Poxa, não encontrei nenhuma compra 😞');
         }
-        $this->showToUser($lastPurchase, $chatId);
+        ResponseChat::interactWithUser($chatId, $this->formatToUser($lastPurchase));
     }
 
-    protected function showToUser(array $lastPurchase, string $chatId): void
+    protected function formatToUser(array $lastPurchase): string
     {
-        $message = "📄 Resumo da compra: \n\n";
+        $message = "📄 Resumo da última compra: \n\n";
         $message .= "📅 Data da compra: " . new DateTime($lastPurchase['purchase']->purchase_date)->format('d/m/Y') . "\n";
         $message .= "🛒 Número de itens: " . $lastPurchase['purchase']->total_items . "\n";
         $message .= "💵 Valor do subtotal: R$ " . number_format($lastPurchase['purchase']->subtotal_value, 2, ',', '.') . "\n";
         $message .= "📊 Valor do desconto: R$ " . number_format($lastPurchase['purchase']->discount_value, 2, ',', '.') . "\n";
         $message .= "💰 Valor total: R$ " . number_format($lastPurchase['purchase']->total_value, 2, ',', '.') . "\n";
         $message .= "━━━━━━━━━━━━━━━━━\n\n";
-        $message .= "📝 Produtos da Compras:\n";
+        $message .= "📝 Produtos da Compras:\n\n";
 
-        ResponseChat::interactWithUser($chatId, $message);
-
-        $productsPack = array_chunk($lastPurchase['products'], 30);
-        foreach ($productsPack as $products) {
-            ResponseChat::interactWithUser($chatId, $this->formatProducts($products));
-        }
-
-        ResponseChat::interactWithUser($chatId, "😅 Ufa, a lista acabou!\n");
-    }
-
-    protected function formatProducts(array $products): string
-    {
-        $return = '';
-        foreach ($products as $product) {
-            $name = substr($product['name'], 0, 30);
+        foreach ($lastPurchase['products'] as $produto) {
+            $name = substr($produto['name'], 0, 30);
             if (strlen($name) === 30) {
                 $name .= "...";
             }
             $name = str_replace(' ', "\u{00A0}", $name);
-            $value = number_format($product['total_value'], 2, ',', '.');
+            $value = number_format($produto['total_price'], 2, ',', '.');
 
-            $return .= "🔹 $name\n          $product[quantity] $product[unit] - R$ $value";
-            $return .= "          ━━━━━━━━━━━━━━━━━\n";
+            $message .= "🔹 $name\n          $produto[quantity] $produto[unit] - R$ $value";
+            $message .= "          ━━━━━━━━━━━━━━━━━\n";
         }
+        $message .= "😅 Ufa, a lista acabou!\n";
 
-        return $return;
+        return $message;
     }
 }
