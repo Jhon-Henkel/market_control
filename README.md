@@ -59,3 +59,18 @@ Para checar se está tudo certo, pode usar:
 ```bash
   docker network inspect nome-da-rede-market-control
 ```
+
+## Reiniciar boot em caso de loop
+Pode acontecer de o boot entrar em loop, então deve-se rodar os comandos:
+```bash
+  curl -X POST "https://api.telegram.org/botSEU_TOKEN/getWebhookInfo"
+  curl -X POST "https://api.telegram.org/botSEU_TOKEN/deleteWebhook"
+  curl -X POST "https://api.telegram.org/botSEU_TOKEN/getUpdates" -d "offset=-1"
+  curl -X POST "https://api.telegram.org/botSEU_TOKEN/setWebhook" -d "url=https://marketcontrol.financasnamao.com.br:8443/api/chat/webhook"
+```
+- O primeiro comando é para ver o status do webhook.
+- O segundo é para deletar o webhook.
+- O terceiro é para pegar as mensagens que estão em espera.
+- O quarto é para setar o webhook novamente.
+
+Ao rodar o segundo comando, esperar alguns segundos antes de rodar o terceiro comando.

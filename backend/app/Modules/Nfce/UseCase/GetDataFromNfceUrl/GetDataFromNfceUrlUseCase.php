@@ -69,7 +69,7 @@ class GetDataFromNfceUrlUseCase
     {
         $totalItems = $xpath->query('//div[@id="linhaTotal"]/span[@class="totalNumb"]')->item(0)->nodeValue;
         $subtotal = $xpath->query('//div[@id="linhaTotal"]/span[@class="totalNumb"]')->item(1)->nodeValue;
-        $discount = $xpath->query('//div[@id="linhaTotal"]/span[@class="totalNumb"]')->item(2)->nodeValue;
+        $discount = $xpath->query('//div[@id="linhaTotal"]/span[@class="totalNumb"]')->item(2)?->nodeValue ?? 0;
         $amount = $xpath->query('//div[@id="linhaTotal" and @class="linhaShade"]/span[@class="totalNumb txtMax"]')->item(0)->nodeValue;
 
         return [
