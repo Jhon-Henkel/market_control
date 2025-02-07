@@ -17,6 +17,7 @@ use App\Modules\ChatBot\UseCase\StartChat\StartChatUseCase;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Throwable;
 
 readonly class ChatBotController
 {
@@ -36,69 +37,77 @@ readonly class ChatBotController
 
     public function __invoke(Request $request): JsonResponse
     {
-        $data = $request->all();
+        try {
+            $data = $request->all();
 
-        if (isset($data['callback_query'])) {
-            $status = $this->processCallbackQuery($data);
-            return ResponseChat::responseChat($status, $data['callback_query']['message']['chat']['id']);
-        }
-
-        if (! isset($data['message'])) {
-            Log::info('Nenhuma mensagem recebida');
-            return ResponseChat::responseChat(ResponseChatEnum::NoMessage);
-        }
-
-        $chatId = $data['message']['chat']['id'];
-        $message = strtolower($data['message']['text'] ?? '');
-        $username = $data['message']['from']['username'] ?? 'Sem username';
-        Log::info("Chat ID: {$chatId} - Mensagem: {$message} - Username: {$username}");
-
-        if (!in_array($username, config('app.telegram_allowed_usernames'))) {
-            Log::error("Usuário não autorizado: {$username}");
-            return ResponseChat::responseChat(ResponseChatEnum::Unauthorized, $chatId);
-        }
-
-        $cacheKey = "telegram_{$chatId}_step";
-        $step = cache($cacheKey, 'default');
-
-        if ($message === '/start') {
-            $this->startChatUseCase->execute($chatId, $cacheKey);
-            return ResponseChat::responseChat(ResponseChatEnum::Ok);
-        }
-
-        if ($message === '/end') {
-            $this->endChatUseCase->execute($chatId, $cacheKey);
-            return ResponseChat::responseChat(ResponseChatEnum::Ok);
-        }
-
-        if ($message === '/nfce') {
-            $this->nfceStartUseCase->execute($chatId, $cacheKey);
-            return ResponseChat::responseChat(ResponseChatEnum::Ok);
-        } elseif ($step === 'waiting_nfce') {
-            $status = $this->stepWaitingNfce($data, $chatId, $cacheKey, $message);
-            return ResponseChat::responseChat($status, $chatId);
-        }
-
-        if ($message === '/last_purchase') {
-            $this->lastPurchaseChatUseCase->execute($chatId);
-            return ResponseChat::responseChat(ResponseChatEnum::FinishChat, $chatId);
-        }
-
-        if ($step === 'finances_in_hands_wallet_list') {
-            $status = $this->financesInHandsWalletSelectUseCase->execute($chatId, $cacheKey, $message);
-            if ($status === ResponseChatEnum::MfpWalletSelected) {
-                $status =  $this->financesInHandsMarkSpentUseCase->execute($chatId, $cacheKey, (int)$message);
+            if (isset($data['callback_query'])) {
+                $status = $this->processCallbackQuery($data);
+                return ResponseChat::responseChat($status, $data['callback_query']['message']['chat']['id']);
             }
-            return ResponseChat::responseChat($status, $chatId);
-        }
 
-        if ($message === '/month') {
-            $this->monthChatUseCase->execute($chatId);
+            if (! isset($data['message'])) {
+                Log::info('Nenhuma mensagem recebida');
+                return ResponseChat::responseChat(ResponseChatEnum::NoMessage);
+            }
+
+            $chatId = $data['message']['chat']['id'];
+            $message = strtolower($data['message']['text'] ?? '');
+            $username = $data['message']['from']['username'] ?? 'Sem username';
+            Log::info("Chat ID: {$chatId} - Mensagem: {$message} - Username: {$username}");
+
+            if (!in_array($username, config('app.telegram_allowed_usernames'))) {
+                Log::error("Usuário não autorizado: {$username}");
+                return ResponseChat::responseChat(ResponseChatEnum::Unauthorized, $chatId);
+            }
+
+            $cacheKey = "telegram_{$chatId}_step";
+            $step = cache($cacheKey, 'default');
+
+            if ($message === '/start') {
+                $this->startChatUseCase->execute($chatId, $cacheKey);
+                return ResponseChat::responseChat(ResponseChatEnum::Ok);
+            }
+
+            if ($message === '/end') {
+                $this->endChatUseCase->execute($chatId, $cacheKey);
+                return ResponseChat::responseChat(ResponseChatEnum::Ok);
+            }
+
+            if ($message === '/nfce') {
+                $this->nfceStartUseCase->execute($chatId, $cacheKey);
+                return ResponseChat::responseChat(ResponseChatEnum::Ok);
+            } elseif ($step === 'waiting_nfce') {
+                $status = $this->stepWaitingNfce($data, $chatId, $cacheKey, $message);
+                return ResponseChat::responseChat($status, $chatId);
+            }
+
+            if ($message === '/last_purchase') {
+                $this->lastPurchaseChatUseCase->execute($chatId);
+                return ResponseChat::responseChat(ResponseChatEnum::FinishChat, $chatId);
+            }
+
+            if ($step === 'finances_in_hands_wallet_list') {
+                $status = $this->financesInHandsWalletSelectUseCase->execute($chatId, $cacheKey, $message);
+                if ($status === ResponseChatEnum::MfpWalletSelected) {
+                    $status =  $this->financesInHandsMarkSpentUseCase->execute($chatId, $cacheKey, (int)$message);
+                }
+                return ResponseChat::responseChat($status, $chatId);
+            }
+
+            if ($message === '/month') {
+                $this->monthChatUseCase->execute($chatId);
+                return ResponseChat::responseChat(ResponseChatEnum::Ok);
+            }
+
+            ResponseChat::interactWithUser($chatId, "🚫 Comando inválido. Digite / para ver as opções.");
+            return ResponseChat::responseChat(ResponseChatEnum::Ok);
+        } catch (Throwable $e) {
+            Log::error($e->getMessage());
+            if (isset($chatId)) {
+                ResponseChat::interactWithUser($chatId, "🚫 Ocorreu um erro ao processar sua solicitação. Tente novamente.");
+            }
             return ResponseChat::responseChat(ResponseChatEnum::Ok);
         }
-
-        ResponseChat::interactWithUser($chatId, "🚫 Comando inválido. Digite / para ver as opções.");
-        return ResponseChat::responseChat(ResponseChatEnum::Ok);
     }
 
     protected function stepWaitingNfce(array $data, string $chatId, string $cacheKey, string $message): ResponseChatEnum
