@@ -85,7 +85,7 @@ class GetDataFromNfceUrlUseCase
         $infoNode = $xpath->query('//div[@id="infos"]/div/ul/li')->item(0)->nodeValue;
 
         return [
-            'number' => Str::between($infoNode, 'NORMALNÃºmero: ', ' SÃ©rie'),
+            'number' => Str::between($infoNode, 'NÃºmero: ', ' SÃ©rie'),
             'series' => Str::between($infoNode, 'SÃ©rie: ', ' EmissÃ'),
             'emission' => Str::between($infoNode, 'EmissÃ£o: ', '- Via Consumidor'),
             'key' => Str::trim(Str::remove(" ", Str::between($html, 'Chave de acesso:</strong><br><span class="chave">', '</span></li>')))
