@@ -13,7 +13,8 @@ class NfceInputDTO
         private readonly string $key,
         private string $emission,
     ) {
-        $this->emission = new DateTime($emission)->format(DateFormatEnum::AppDefault->value);
+        $date = DateTime::createFromFormat(DateFormatEnum::Brazilian->value, $emission);
+        $this->emission = $date->format(DateFormatEnum::AppDefault->value);
     }
 
     public function getNumber(): string
