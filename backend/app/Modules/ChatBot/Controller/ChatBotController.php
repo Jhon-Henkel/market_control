@@ -104,7 +104,9 @@ readonly class ChatBotController
         } catch (Throwable $e) {
             Log::error($e->getMessage());
             if (isset($chatId)) {
-                ResponseChat::interactWithUser($chatId, "🚫 Ocorreu um erro ao processar sua solicitação. Tente novamente.");
+                $message = "🚫 Ocorreu um erro ao processar sua solicitação. Tente novamente.\n\n";
+                $message .= "Erro: {$e->getMessage()}";
+                ResponseChat::interactWithUser($chatId, $message);
             }
             return ResponseChat::responseChat(ResponseChatEnum::Ok);
         }
