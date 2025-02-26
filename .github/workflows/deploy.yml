@@ -30,4 +30,5 @@ jobs:
             docker exec mc_app bash -c "composer update --optimize-autoloader --no-dev"
             docker exec mc_app bash -c "php artisan migrate --force"
             docker exec mc_app bash -c "php artisan optimize"
+            docker network connect market_control_mc_network mfp_app
             docker exec mc_app bash -c "php artisan up"
