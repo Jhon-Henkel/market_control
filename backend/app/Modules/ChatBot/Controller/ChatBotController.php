@@ -51,7 +51,15 @@ readonly class ChatBotController
             }
 
             $chatId = $data['message']['chat']['id'];
-            $message = strtolower($data['message']['text'] ?? '');
+
+            $cacheKey = "telegram_{$chatId}_step";
+            $step = cache($cacheKey, 'default');
+
+            $message = $data['message']['text'] ?? '';
+            if ($step !== 'waiting_nfce') {
+                $message = strtolower($message);
+            }
+
             $username = $data['message']['from']['username'] ?? 'Sem username';
             Log::info("Chat ID: {$chatId} - Mensagem: {$message} - Username: {$username}");
 
@@ -59,9 +67,6 @@ readonly class ChatBotController
                 Log::error("Usuário não autorizado: {$username}");
                 return ResponseChat::responseChat(ResponseChatEnum::Unauthorized, $chatId);
             }
-
-            $cacheKey = "telegram_{$chatId}_step";
-            $step = cache($cacheKey, 'default');
 
             if ($message === '/start') {
                 $this->startChatUseCase->execute($chatId, $cacheKey);
