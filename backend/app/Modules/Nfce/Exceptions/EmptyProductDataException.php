@@ -14,8 +14,8 @@ class EmptyProductDataException extends BadRequestException
 
     public static function throwIfEmpty(array $array): void
     {
-        Log::error('Empty product data. Data: ' . json_encode($array));
         if (empty($array)) {
+            Log::error('Empty product data. Data: ' . json_encode($array));
             throw new self();
         }
     }
