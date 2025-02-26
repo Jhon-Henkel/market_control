@@ -8,6 +8,7 @@ use App\Modules\Nfce\UseCase\InsertByChatbot\InsertByChatbotUseCase;
 use DOMDocument;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Throwable;
 
 class NfceProcessUseCase
 {
@@ -72,19 +73,36 @@ class NfceProcessUseCase
 
     protected function processQRCode(string $imagePath): ?string
     {
-        $url = 'https://zxing.org/w/decode';
-        $response = Http::attach('f', file_get_contents($imagePath), 'qr_code_image.jpg')->post($url);
-        $data = $response->body();
+        try {
+            $url = 'https://zxing.org/w/decode';
+            $response = Http::attach('f', file_get_contents($imagePath), 'qr_code_image.jpg')->post($url);
+            $data = $response->body();
 
-        Log::info('QR Code Lido');
+            Log::info('QR Code Lido');
 
-        $dom = new DOMDocument();
-        @$dom->loadHTML($data);
-        $preTags = $dom->getElementsByTagName('pre');
+            $dom = new DOMDocument();
+            @$dom->loadHTML($data);
+            $preTags = $dom->getElementsByTagName('pre');
 
-        if ($preTags->length > 0) {
-            Log::info('QR Code Processado');
-            return trim($preTags->item(0)->nodeValue);
+            if ($preTags->length > 0) {
+                $qrData = $preTags->item(0)->nodeValue;
+                Log::info("QR Code Processado com zxing, URL: $qrData");
+                return trim($qrData);
+            }
+        } catch (Throwable) {
+            Log::error('Erro ao processar QR Code com o zxing, executando tentativa com o qrserver');
+
+            $url = 'https://api.qrserver.com/v1/read-qr-code/';
+
+            $response = Http::attach('file', file_get_contents($imagePath), 'qr_code.png')->post($url);
+            $data = $response->json();
+
+            if (! empty($data[0]['symbol'][0]['data'])) {
+                $qrData = $data[0]['symbol'][0]['data'];
+                Log::info("QR Code Processado com qrserver, URL: $qrData");
+                return trim($qrData);
+            }
+            Log::error('Erro ao processar QR Code com o qrserver');
         }
 
         Log::error('QR Code não contém uma URL válida.');
