@@ -8,6 +8,9 @@ WORKDIR /var/www/html/backend
 # copy composer
 COPY --from=composer-php /usr/bin/composer /usr/bin/composer
 
+RUN docker-php-ext-install opcache
+COPY config/prod/docker/opcache.ini /usr/local/etc/php/conf.d/opcache.ini
+
 # installing zip
 RUN apt-get update && apt-get install -y zlib1g-dev libzip-dev unzip
 RUN docker-php-ext-install zip

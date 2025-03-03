@@ -17,7 +17,8 @@ NFCe e o sistema irá buscar os dados e salvar no banco de dados para posteriore
 ## Iniciando o Projeto
 - Rodar os seguintes comandos:
     ```bash
-      docker-compose up
+      cp config/develop/docker/docker-compose.yml docker-compose.yml
+      docker-compose up -d
       make bakcnd-bash
       chown www-data:www-data -R storage/framework
       chown www-data:www-data -R storage/logs/
